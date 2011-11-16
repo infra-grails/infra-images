@@ -8,6 +8,8 @@ import javax.imageio.ImageIO
  * @since 11/1/11 1:10 PM
  */
 class MirariImageStorageService {
+    static transactional = false
+
     def mirariFileStorageService
 
     /**
