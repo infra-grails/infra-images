@@ -1,0 +1,14 @@
+<plugin name='mirari-image-format' version='0.1' grailsVersion='2.0 &gt; *'>
+  <author>Dmitry Kurinskiy</author>
+  <authorEmail>name.alari@gmail.com</authorEmail>
+  <title>Mirari Image Format Plugin</title>
+  <description>Image resizer, reformatter, and storage routine. May depend on mirari-fileStorage plugin.
+</description>
+  <documentation>https://github.com/alari/mirari-fileStorage</documentation>
+  <type>MirariImageFormatGrailsPlugin</type>
+  <resources>
+    <resource>ru.mirari.image.MirariImageStorageService</resource>
+  </resources>
+  <dependencies />
+  <behavior />
+</plugin>

@@ -12,19 +12,19 @@ class MirariImageFormatGrailsPlugin {
 
     // TODO Fill in these fields
     def title = "Mirari Image Format Plugin" // Headline display name of the plugin
-    def author = "Your name"
-    def authorEmail = ""
+    def author = "Dmitry Kurinskiy"
+    def authorEmail = "name.alari@gmail.com"
     def description = '''\
-Brief summary/description of the plugin.
+Image resizer, reformatter, and storage routine. May depend on mirari-fileStorage plugin.
 '''
 
     // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/mirari-image-format"
+    def documentation = "https://github.com/alari/mirari-fileStorage"
 
     // Extra (optional) plugin metadata
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
-    //    def license = "APACHE"
+        def license = "APACHE"
 
     // Details of company behind the plugin (if there is one)
     //    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
@@ -33,10 +33,10 @@ Brief summary/description of the plugin.
     //    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
 
     // Location of the plugin's issue tracker.
-    //    def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
+        def issueManagement = [ system: "github", url: "https://github.com/alari/mirari-fileStorage/issues" ]
 
     // Online location of the plugin's browseable source code.
-    //    def scm = [ url: "http://svn.grails-plugins.codehaus.org/browse/grails-plugins/" ]
+       def scm = [ url: "https://github.com/alari/mirari-fileStorage" ]
 
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before
