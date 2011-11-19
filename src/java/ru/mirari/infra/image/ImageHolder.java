@@ -1,4 +1,4 @@
-package ru.mirari.image;
+package ru.mirari.infra.image;
 
 import java.util.List;
 

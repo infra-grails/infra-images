@@ -1,16 +1,18 @@
-package ru.mirari.image
+package ru.mirari.infra.image
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import ru.mirari.infra.image.ImageHolder
+import ru.mirari.infra.image.ImageFormat
 
 /**
  * @author alari
  * @since 11/1/11 1:10 PM
  */
-class MirariImageStorageService {
+class ImageStorageService {
     static transactional = false
 
-    def mirariFileStorageService
+    def fileStorageService
 
     /**
      * Builds filename from format, type, and prefered filename

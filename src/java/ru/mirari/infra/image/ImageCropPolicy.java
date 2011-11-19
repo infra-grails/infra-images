@@ -1,4 +1,4 @@
-package ru.mirari.image;
+package ru.mirari.infra.image;
 
 /**
  * @author Dmitry Kurinskiy

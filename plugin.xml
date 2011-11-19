@@ -7,7 +7,7 @@
   <documentation>https://github.com/alari/mirari-fileStorage</documentation>
   <type>MirariImageFormatGrailsPlugin</type>
   <resources>
-    <resource>ru.mirari.image.MirariImageStorageService</resource>
+    <resource>ru.mirari.infra.image.ImageStorageService</resource>
   </resources>
   <dependencies />
   <behavior />
