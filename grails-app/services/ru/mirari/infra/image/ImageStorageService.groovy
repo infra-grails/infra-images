@@ -37,7 +37,7 @@ class ImageStorageService {
     void storeFormatted(final ImageFormat format, final File image, String path, String filename = null,
                         String bucket = null) {
         filename = getFilename(format, filename)
-        mirariFileStorageService.store(image, path, filename, bucket)
+        fileStorageService.store(image, path, filename, bucket)
     }
 
     /**
@@ -142,7 +142,7 @@ class ImageStorageService {
      * @return
      */
     String getUrl(ImageFormat format, String path, String filename = null, String bucket = null) {
-        mirariFileStorageService.getUrl(path, getFilename(format, filename), bucket)
+        fileStorageService.getUrl(path, getFilename(format, filename), bucket)
     }
 
     /**
@@ -153,7 +153,8 @@ class ImageStorageService {
      * @return
      */
     String getUrl(final ImageHolder holder, ImageFormat format = null) {
-        mirariFileStorageService.getUrl(holder.imagesPath, getFilename(format ?: holder.defaultImageFormat), holder.imagesBucket)
+        fileStorageService.getUrl(holder.imagesPath, getFilename(format ?: holder.defaultImageFormat),
+                holder.imagesBucket)
     }
 
     /**
@@ -164,10 +165,10 @@ class ImageStorageService {
      */
     void delete(final ImageHolder holder, ImageFormat format = null) {
         if (format) {
-            mirariFileStorageService.delete(holder.imagesPath, getFilename(format), holder.imagesBucket)
+            fileStorageService.delete(holder.imagesPath, getFilename(format), holder.imagesBucket)
         } else {
             for (ImageFormat f in holder.imageFormats) {
-                mirariFileStorageService.delete(holder.imagesPath, getFilename(f), holder.imagesBucket)
+                fileStorageService.delete(holder.imagesPath, getFilename(f), holder.imagesBucket)
             }
         }
     }
