@@ -19,7 +19,7 @@ public enum ImageCropPolicy {
     private byte policy;
 
     ImageCropPolicy(int policy) {
-        this.policy = (byte)policy;
+        this.policy = (byte) policy;
     }
 
     boolean isNoCrop() {

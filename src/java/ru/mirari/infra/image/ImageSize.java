@@ -10,7 +10,7 @@ import java.util.Map;
  * @since 10/31/11 11:31 PM
  */
 public class ImageSize implements Comparable<ImageSize> {
-    private static Map<String,ImageSize> bySize = new HashMap<String, ImageSize>();
+    private static Map<String, ImageSize> bySize = new HashMap<String, ImageSize>();
 
     public final int width;
     public final int height;
@@ -25,16 +25,16 @@ public class ImageSize implements Comparable<ImageSize> {
             return bySize.get(size);
         }
         List<Integer> list = new ArrayList<Integer>(4);
-        for (String s: size.split("[\\*x]")) {
+        for (String s : size.split("[\\*x]")) {
             list.add(Integer.parseInt(s));
         }
-        System.err.println(list) ;
+        System.err.println(list);
         bySize.put(size, new ImageSize(list.get(0), list.get(1)));
         return bySize.get(size);
     }
 
     public String toString() {
-      return String.valueOf(width).concat("*").concat(String.valueOf(height));
+        return String.valueOf(width).concat("*").concat(String.valueOf(height));
     }
 
     public int compareTo(ImageSize o) {

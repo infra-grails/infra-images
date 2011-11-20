@@ -2,8 +2,6 @@ package ru.mirari.infra.image
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import ru.mirari.infra.image.ImageHolder
-import ru.mirari.infra.image.ImageFormat
 
 /**
  * @author alari

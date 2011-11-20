@@ -1,9 +1,6 @@
 package ru.mirari.image
 
-
-
-import grails.test.mixin.*
-
+import grails.test.mixin.TestFor
 import ru.mirari.infra.image.ImageStorageService
 
 /**

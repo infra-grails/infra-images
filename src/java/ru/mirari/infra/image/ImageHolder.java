@@ -7,7 +7,7 @@ import java.util.List;
  * @since 11/4/11 10:00 AM
  */
 public interface ImageHolder {
-      String getImagesPath();
+    String getImagesPath();
 
     String getImagesBucket();
 
