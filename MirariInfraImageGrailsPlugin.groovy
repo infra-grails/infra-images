@@ -1,4 +1,4 @@
-class MirariImageFormatGrailsPlugin {
+class MirariInfraImageGrailsPlugin {
     // the plugin version
     def version = "0.1"
     // the version or versions of Grails the plugin is designed for
@@ -15,16 +15,16 @@ class MirariImageFormatGrailsPlugin {
     def author = "Dmitry Kurinskiy"
     def authorEmail = "name.alari@gmail.com"
     def description = '''\
-Image resizer, reformatter, and storage routine. May depend on mirari-fileStorage plugin.
+Image resizer, reformatter, and storage routine. May depend on mirari-infra-file plugin.
 '''
 
     // URL to the plugin's documentation
-    def documentation = "https://github.com/alari/mirari-fileStorage"
+    def documentation = "https://github.com/alari/mirari-infra-image"
 
     // Extra (optional) plugin metadata
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
-        def license = "APACHE"
+    def license = "APACHE"
 
     // Details of company behind the plugin (if there is one)
     //    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
@@ -33,10 +33,10 @@ Image resizer, reformatter, and storage routine. May depend on mirari-fileStorag
     //    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
 
     // Location of the plugin's issue tracker.
-        def issueManagement = [ system: "github", url: "https://github.com/alari/mirari-fileStorage/issues" ]
+    def issueManagement = [system: "github", url: "https://github.com/alari/mirari-infra-image/issues"]
 
     // Online location of the plugin's browseable source code.
-       def scm = [ url: "https://github.com/alari/mirari-fileStorage" ]
+    def scm = [url: "https://github.com/alari/mirari-infra-image"]
 
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before
