@@ -1,14 +1,14 @@
-<plugin name='mirari-infra-image' version='0.1' grailsVersion='2.0 &gt; *'>
-    <author>Dmitry Kurinskiy</author>
-    <authorEmail>name.alari@gmail.com</authorEmail>
-    <title>Mirari Image Format Plugin</title>
-    <description>Image resizer, reformatter, and storage routine. May depend on mirari-infra-file plugin.
+<plugin name='mirari-infra-image' version='0.1' grailsVersion='2.0.0.RC1 &gt; *'>
+  <author>Dmitry Kurinskiy</author>
+  <authorEmail>name.alari@gmail.com</authorEmail>
+  <title>Mirari Image Format Plugin</title>
+  <description>Image resizer, reformatter, and storage routine. May depend on mirari-infra-file plugin.
     </description>
-    <documentation>https://github.com/alari/mirari-infra-image</documentation>
-    <type>MirariInfraImageGrailsPlugin</type>
-    <resources>
-        <resource>ru.mirari.infra.image.ImageStorageService</resource>
-    </resources>
-    <dependencies/>
-    <behavior/>
+  <documentation>https://github.com/alari/mirari-infra-image</documentation>
+  <type>MirariInfraImageGrailsPlugin</type>
+  <resources>
+    <resource>ru.mirari.infra.image.ImageStorageService</resource>
+  </resources>
+  <dependencies />
+  <behavior />
 </plugin>

@@ -156,18 +156,23 @@ class ImageStorageService {
     }
 
     /**
-     * Deletes specified image format or all the holder-attached images
+     * Deletes specified image format
      *
      * @param holder
      * @param format
      */
-    void delete(final ImageHolder holder, ImageFormat format = null) {
-        if (format) {
-            fileStorageService.delete(holder.imagesPath, getFilename(format), holder.imagesBucket)
-        } else {
-            for (ImageFormat f in holder.imageFormats) {
-                fileStorageService.delete(holder.imagesPath, getFilename(f), holder.imagesBucket)
-            }
+    void delete(final ImageHolder holder, ImageFormat format) {
+        fileStorageService.delete(holder.imagesPath, getFilename(format), holder.imagesBucket)
+    }
+
+    /**
+     * Deletes all holder images
+     *
+     * @param holder
+     */
+    void delete(final ImageHolder holder) {
+        for (ImageFormat f in holder.imageFormats) {
+            delete(holder, f)
         }
     }
 }
