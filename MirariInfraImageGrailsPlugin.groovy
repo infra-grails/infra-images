@@ -64,8 +64,8 @@ Image resizer, reformatter, and storage routine. May depend on mirari-infra-file
         // TODO Implement code that is executed when the project configuration changes.
         // The event is the same as for 'onChange'.
     }
-
+     /*
     def onShutdown = { event ->
         // TODO Implement code that is executed when the application shuts down (optional)
-    }
+    }  */
 }
