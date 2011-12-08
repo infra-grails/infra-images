@@ -96,11 +96,13 @@ public class ImageFormat implements Comparable<ImageFormat> {
         // We need to deeply modify an image
         BufferedImage workingImage = original;
 
-        // At first we resize
-        ImageSize resize = calcResizeBeforeCrop(workingImage);
-        // TODO: we may have no need to resize, only to crop
+        // At first we resize, if we need to
+        // (we may have no need to resize, only to crop)
+        if (original.getWidth() > size.width && original.getHeight() > size.height) {
+            ImageSize resize = calcResizeBeforeCrop(workingImage);
 
-        workingImage = Thumbnailator.createThumbnail(workingImage, resize.width, resize.height);
+            workingImage = Thumbnailator.createThumbnail(workingImage, resize.width, resize.height);
+        }
         if (workingImage.getWidth() == size.width && workingImage.getHeight() == size.height) {
             return workingImage;
         }
