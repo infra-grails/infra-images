@@ -1,4 +1,4 @@
-class MirariInfraImageGrailsPlugin {
+class InfraImagesGrailsPlugin {
     // the plugin version
     def version = "0.1"
     // the version or versions of Grails the plugin is designed for
@@ -19,7 +19,7 @@ Image resizer, reformatter, and storage routine. May depend on mirari-infra-file
 '''
 
     // URL to the plugin's documentation
-    def documentation = "https://github.com/alari/mirari-infra-image"
+    def documentation = "https://github.com/alari/infra-images"
 
     // Extra (optional) plugin metadata
 
@@ -33,10 +33,10 @@ Image resizer, reformatter, and storage routine. May depend on mirari-infra-file
     //    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
 
     // Location of the plugin's issue tracker.
-    def issueManagement = [system: "github", url: "https://github.com/alari/mirari-infra-image/issues"]
+    def issueManagement = [system: "github", url: "https://github.com/alari/infra-images/issues"]
 
     // Online location of the plugin's browseable source code.
-    def scm = [url: "https://github.com/alari/mirari-infra-image"]
+    def scm = [url: "https://github.com/alari/infra-images"]
 
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before

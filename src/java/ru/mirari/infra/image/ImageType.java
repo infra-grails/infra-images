@@ -11,11 +11,17 @@ public enum ImageType {
 
     private final String name;
 
+    static private final boolean isOpenJDK;
+
+    static {
+        isOpenJDK = System.getProperty("java.vm.name").contains("OpenJDK");
+    }
+
     ImageType(String name) {
         this.name = name;
     }
 
     public String toString() {
-        return name;
+        return isOpenJDK ? "png" : name;
     }
 }

@@ -1,7 +1,6 @@
 package ru.mirari.infra.image
 
 import java.awt.image.BufferedImage
-import javax.imageio.ImageIO
 
 /**
  * @author alari
@@ -50,7 +49,7 @@ class ImageStorageService {
     void storeFormatted(final ImageFormat format, final BufferedImage image, String path, String filename = null,
                         String bucket = null) {
         File tmp = File.createTempFile(getClass().simpleName + format.name, "." + format.type.toString())
-        ImageIO.write(image, format.type.toString(), tmp)
+        format.write(image, tmp)
         storeFormatted(format, tmp, path, filename, bucket)
         tmp.delete()
     }
@@ -80,7 +79,10 @@ class ImageStorageService {
      */
     void format(final ImageFormat format, final BufferedImage image, String path, String filename = null,
                 String bucket = null) {
-        storeFormatted(format, format.format(image), path, filename, bucket)
+        File tmp = File.createTempFile(getClass().simpleName + format.name, "." + format.type.toString())
+        format.format(image, tmp)
+        storeFormatted(format, tmp, path, filename, bucket)
+        tmp.delete()
     }
 
     /**
@@ -94,7 +96,7 @@ class ImageStorageService {
      */
     void format(final ImageHolder holder, File original,
                 List<ImageFormat> formats = [], boolean deleteOriginal = true) {
-        formats = (formats ?: holder.imageFormats).sort()
+        formats = (formats ?: (List<ImageFormat>)holder.imageFormats.clone()).sort()
 
         ImageFormat largest = formats.pop()
         BufferedImage im = largest.formatToBuffer(original)

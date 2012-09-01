@@ -28,7 +28,6 @@ public class ImageSize implements Comparable<ImageSize> {
         for (String s : size.split("[\\*x]")) {
             list.add(Integer.parseInt(s));
         }
-        System.err.println(list);
         bySize.put(size, new ImageSize(list.get(0), list.get(1)));
         return bySize.get(size);
     }

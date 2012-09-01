@@ -1,6 +1,6 @@
 package ru.mirari.infra.image;
 
-import net.coobird.thumbnailator.Thumbnailator;
+import net.coobird.thumbnailator.Thumbnails;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,7 +15,8 @@ public class ImageFormat implements Comparable<ImageFormat> {
     private final static String TMP_PREFIX = "imageFile";
     private final static String DEFAULT_NAME = "image";
     private final static ImageCropPolicy DEFAULT_CROP = ImageCropPolicy.CENTER;
-    private final static ImageType DEFAULT_TYPE = ImageType.PNG;
+    private final static ImageType DEFAULT_TYPE = ImageType.JPG;
+    private final static float DEFAULT_QUALITY = 0.9f;
 
     public final ImageCropPolicy cropPolicy;
     public final ImageType type;
@@ -57,11 +58,23 @@ public class ImageFormat implements Comparable<ImageFormat> {
         return size.toString() + "-" + name + "." + type;
     }
 
+    public void write(final BufferedImage image, File output) throws IOException {
+        Thumbnails.of(image)
+                .scale(1)
+                .outputQuality(DEFAULT_QUALITY)
+                .outputFormat(type.toString())
+                .toFile(output);
+    }
+
     public void reformat(File original) throws IOException {
         if (cropPolicy.isNoCrop()) {
-            Thumbnailator.createThumbnail(original, original, size.width, size.height);
+            Thumbnails.of(original)
+                    .size(size.width, size.height)
+                    .outputQuality(DEFAULT_QUALITY)
+                    .outputFormat(type.toString())
+                    .toFile(original);
         } else {
-            ImageIO.write(format(ImageIO.read(original)), type.toString(), original);
+            write(ImageIO.read(original), original);
         }
     }
 
@@ -69,12 +82,28 @@ public class ImageFormat implements Comparable<ImageFormat> {
         File tmp = File.createTempFile(TMP_PREFIX + name, "." + type);
 
         if (cropPolicy.isNoCrop()) {
-            Thumbnailator.createThumbnail(original, tmp, size.width, size.height);
+            Thumbnails.of(original)
+                    .size(size.width, size.height)
+                    .outputQuality(DEFAULT_QUALITY)
+                    .outputFormat(type.toString())
+                    .toFile(tmp);
             return tmp;
         }
 
-        ImageIO.write(format(ImageIO.read(original)), type.toString(), tmp);
+        write(format(ImageIO.read(original)), tmp);
         return tmp;
+    }
+
+    public void format(final BufferedImage original, File output) throws IOException {
+        Thumbnails.Builder<BufferedImage> builder =
+                Thumbnails.of(original)
+                        .size(size.width, size.height)
+                        .outputQuality(DEFAULT_QUALITY)
+                        .outputFormat(type.toString());
+        if (!cropPolicy.isNoCrop()) {
+            builder.crop(cropPolicy.getPosition());
+        }
+        builder.toFile(output);
     }
 
     public BufferedImage formatToBuffer(final File original) throws IOException {
@@ -88,76 +117,24 @@ public class ImageFormat implements Comparable<ImageFormat> {
             return original;
         }
 
-        // No crop et al
-        if (cropPolicy.isNoCrop()) {
-            return Thumbnailator.createThumbnail(original, size.width, size.height);
-        }
-
-        // We need to deeply modify an image
-        BufferedImage workingImage = original;
-
-        // At first we resize, if we need to
-        // (we may have no need to resize, only to crop)
-        if (original.getWidth() > size.width && original.getHeight() > size.height) {
-            ImageSize resize = calcResizeBeforeCrop(workingImage);
-
-            workingImage = Thumbnailator.createThumbnail(workingImage, resize.width, resize.height);
-        }
-        if (workingImage.getWidth() == size.width && workingImage.getHeight() == size.height) {
-            return workingImage;
-        }
-
-        // Then we crop
-        int x0 = 0, y0 = 0;
-
-        int w = Math.min(size.width, workingImage.getWidth());
-        int h = Math.min(size.height, workingImage.getHeight());
-
-        if (workingImage.getWidth() > size.width) {
-            // Too wide image
-            if (cropPolicy.isLeft()) {
-                x0 = 0;
-            } else if (cropPolicy.isRight()) {
-                x0 = workingImage.getWidth() - w;
-            } else {
-                x0 = (int) Math.ceil((workingImage.getWidth() - w) / 2);
+        try {
+            if (cropPolicy.isNoCrop()) {
+                return Thumbnails.of(original)
+                        .size(size.width, size.height)
+                        .outputQuality(DEFAULT_QUALITY)
+                        .outputFormat(type.toString())
+                        .asBufferedImage();
             }
+            return Thumbnails.of(original)
+                    .size(size.width, size.height)
+                    .crop(cropPolicy.getPosition())
+                    .outputQuality(DEFAULT_QUALITY)
+                    .outputFormat(type.toString())
+                    .asBufferedImage();
+        } catch (IOException e) {
+            System.err.println(e);
         }
-        if (workingImage.getHeight() > size.height) {
-            // Too tall image
-            if (cropPolicy.isTop()) {
-                y0 = 0;
-            } else if (cropPolicy.isBottom()) {
-                y0 = workingImage.getHeight() - h;
-            } else {
-                y0 = (int) Math.ceil((workingImage.getHeight() - h) / 2);
-            }
-        }
-
-        // The job is done
-        return workingImage.getSubimage(x0, y0, w, h);
-    }
-
-    private ImageSize calcResizeBeforeCrop(final BufferedImage image) {
-        double yAspect = image.getHeight() / size.height;
-        double xAspect = image.getWidth() / size.width;
-
-        if (xAspect == yAspect || (xAspect < 1 && yAspect < 1)) {
-            return new ImageSize(size.width, size.height);
-        }
-
-        if (xAspect < 1) {
-            return new ImageSize(image.getWidth(), size.height);
-        }
-        if (yAspect < 1) {
-            return new ImageSize(size.width, image.getHeight());
-        }
-
-        if (xAspect < yAspect) {
-            return new ImageSize(size.width, (int) Math.ceil(image.getHeight() / xAspect));
-        } else {
-            return new ImageSize((int) Math.ceil(image.getWidth() / yAspect), size.height);
-        }
+        return null;
     }
 
     public int compareTo(ImageFormat o) {
