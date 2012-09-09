@@ -80,24 +80,17 @@ public class ImageFormat implements Comparable<ImageFormat> {
 
     public File format(final File original) throws IOException {
         File tmp = File.createTempFile(TMP_PREFIX + name, "." + type);
-
-        if (cropPolicy.isNoCrop()) {
-            Thumbnails.of(original)
-                    .size(size.width, size.height)
-                    .outputQuality(DEFAULT_QUALITY)
-                    .outputFormat(type.toString())
-                    .toFile(tmp);
-            return tmp;
-        }
-
         write(format(ImageIO.read(original)), tmp);
         return tmp;
     }
 
     public void format(final BufferedImage original, File output) throws IOException {
+        final int width = size.width > original.getWidth() ? original.getWidth() : size.width;
+        final int height = size.height > original.getHeight() ? original.getHeight() : size.height;
+
         Thumbnails.Builder<BufferedImage> builder =
                 Thumbnails.of(original)
-                        .size(size.width, size.height)
+                        .size(width, height)
                         .outputQuality(DEFAULT_QUALITY)
                         .outputFormat(type.toString());
         if (!cropPolicy.isNoCrop()) {
