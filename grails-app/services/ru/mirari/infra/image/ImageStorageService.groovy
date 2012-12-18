@@ -34,7 +34,7 @@ class ImageStorageService {
     void storeFormatted(final ImageFormat format, final File image, String path, String filename = null,
                         String bucket = null) {
         filename = getFilename(format, filename)
-        fileStorageService.store(image, path, filename, bucket)
+        fileStorageService.getFileStorage().store(image, path, filename, bucket)
     }
 
     /**
@@ -96,7 +96,7 @@ class ImageStorageService {
      */
     void format(final ImageHolder holder, File original,
                 List<ImageFormat> formats = [], boolean deleteOriginal = true) {
-        formats = (formats ?: (List<ImageFormat>)holder.imageFormats.clone()).sort()
+        formats = (formats ?: (List<ImageFormat>) holder.imageFormats.clone()).sort()
 
         ImageFormat largest = formats.pop()
         BufferedImage im = largest.formatToBuffer(original)
@@ -142,7 +142,7 @@ class ImageStorageService {
      * @return
      */
     String getUrl(ImageFormat format, String path, String filename = null, String bucket = null) {
-        fileStorageService.getUrl(path, getFilename(format, filename), bucket)
+        fileStorageService.getFileStorage().getUrl(path, getFilename(format, filename), bucket)
     }
 
     /**
@@ -153,7 +153,7 @@ class ImageStorageService {
      * @return
      */
     String getUrl(final ImageHolder holder, ImageFormat format = null) {
-        fileStorageService.getUrl(holder.imagesPath, getFilename(format ?: holder.defaultImageFormat),
+        fileStorageService.getFileStorage().getUrl(holder.imagesPath, getFilename(format ?: holder.defaultImageFormat),
                 holder.imagesBucket)
     }
 
@@ -164,7 +164,7 @@ class ImageStorageService {
      * @param format
      */
     void delete(final ImageHolder holder, ImageFormat format) {
-        fileStorageService.delete(holder.imagesPath, getFilename(format), holder.imagesBucket)
+        fileStorageService.getFileStorage().delete(holder.imagesPath, getFilename(format), holder.imagesBucket)
     }
 
     /**
