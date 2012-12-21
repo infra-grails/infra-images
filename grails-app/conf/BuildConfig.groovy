@@ -3,6 +3,8 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
+grails.plugin.location.'infra-file-storage' = "../infra-file-storage"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {

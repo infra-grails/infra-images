@@ -1,6 +1,8 @@
-package ru.mirari.infra.image;
+package ru.mirari.infra.image.deprecated;
 
 import net.coobird.thumbnailator.Thumbnails;
+import ru.mirari.infra.image.format.ImageCropPolicy;
+import ru.mirari.infra.image.format.ImageType;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -11,6 +13,7 @@ import java.io.IOException;
  * @author Dmitry Kurinskiy
  * @since 24.10.11 13:20
  */
+@Deprecated
 public class ImageFormat implements Comparable<ImageFormat> {
     private final static String TMP_PREFIX = "imageFile";
     private final static String DEFAULT_NAME = "image";
@@ -64,18 +67,6 @@ public class ImageFormat implements Comparable<ImageFormat> {
                 .outputQuality(DEFAULT_QUALITY)
                 .outputFormat(type.toString())
                 .toFile(output);
-    }
-
-    public void reformat(File original) throws IOException {
-        if (cropPolicy.isNoCrop()) {
-            Thumbnails.of(original)
-                    .size(size.width, size.height)
-                    .outputQuality(DEFAULT_QUALITY)
-                    .outputFormat(type.toString())
-                    .toFile(original);
-        } else {
-            write(ImageIO.read(original), original);
-        }
     }
 
     public File format(final File original) throws IOException {

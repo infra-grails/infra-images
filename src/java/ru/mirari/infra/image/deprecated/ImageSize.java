@@ -1,4 +1,4 @@
-package ru.mirari.infra.image;
+package ru.mirari.infra.image.deprecated;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.Map;
  * @author alari
  * @since 10/31/11 11:31 PM
  */
+@Deprecated
 public class ImageSize implements Comparable<ImageSize> {
     private static Map<String, ImageSize> bySize = new HashMap<String, ImageSize>();
 

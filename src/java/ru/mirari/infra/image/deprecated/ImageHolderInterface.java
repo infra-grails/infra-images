@@ -1,4 +1,4 @@
-package ru.mirari.infra.image;
+package ru.mirari.infra.image.deprecated;
 
 import java.util.List;
 
@@ -6,7 +6,8 @@ import java.util.List;
  * @author alari
  * @since 11/4/11 10:00 AM
  */
-public interface ImageHolder {
+@Deprecated
+public interface ImageHolderInterface {
     String getImagesPath();
 
     String getImagesBucket();

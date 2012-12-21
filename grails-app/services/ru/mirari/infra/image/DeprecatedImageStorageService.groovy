@@ -1,18 +1,22 @@
 package ru.mirari.infra.image
 
+import ru.mirari.infra.image.deprecated.ImageFormat
+import ru.mirari.infra.image.deprecated.ImageHolderInterface
+
 import java.awt.image.BufferedImage
 
 /**
  * @author alari
  * @since 11/1/11 1:10 PM
  */
-class ImageStorageService {
+@Deprecated
+class DeprecatedImageStorageService {
     static transactional = false
 
     def fileStorageService
 
     /**
-     * Builds filename from format, type, and prefered filename
+     * Builds filename from format, type, and preferred filename
      *
      * @param format
      * @param filename
@@ -86,7 +90,7 @@ class ImageStorageService {
     }
 
     /**
-     * Formats an image file into several instances for ImageHolder; stores all the ones
+     * Formats an image file into several instances for ImageHolderInterface; stores all the ones
      * If you pass formats list, it only saves images in these formats
      *
      * @param holder
@@ -94,7 +98,7 @@ class ImageStorageService {
      * @param formats
      * @param deleteOriginal
      */
-    void format(final ImageHolder holder, File original,
+    void format(final ImageHolderInterface holder, File original,
                 List<ImageFormat> formats = [], boolean deleteOriginal = true) {
         formats = (formats ?: (List<ImageFormat>) holder.imageFormats.clone()).sort()
 
@@ -152,7 +156,7 @@ class ImageStorageService {
      * @param format
      * @return
      */
-    String getUrl(final ImageHolder holder, ImageFormat format = null) {
+    String getUrl(final ImageHolderInterface holder, ImageFormat format = null) {
         fileStorageService.getFileStorage().getUrl(holder.imagesPath, getFilename(format ?: holder.defaultImageFormat),
                 holder.imagesBucket)
     }
@@ -163,7 +167,7 @@ class ImageStorageService {
      * @param holder
      * @param format
      */
-    void delete(final ImageHolder holder, ImageFormat format) {
+    void delete(final ImageHolderInterface holder, ImageFormat format) {
         fileStorageService.getFileStorage().delete(holder.imagesPath, getFilename(format), holder.imagesBucket)
     }
 
@@ -172,7 +176,7 @@ class ImageStorageService {
      *
      * @param holder
      */
-    void delete(final ImageHolder holder) {
+    void delete(final ImageHolderInterface holder) {
         for (ImageFormat f in holder.imageFormats) {
             delete(holder, f)
         }
