@@ -12,14 +12,14 @@ public class BasesFormat extends ImageFormat {
     private final ImageCropPolicy crop;
     private final ImageType type;
     private final float quality;
-    private final float dexterity;
+    private final float density;
 
     public BasesFormat(BaseFormat[] baseFormats) {
 
         // check from bases if default
         ImageCropPolicy cropPolicy = ImageCropPolicy.DEFAULT;
         ImageType imageType = ImageType.DEFAULT;
-        float imageDexterity = -1;
+        float imageDensity = -1;
         float imageQuality = -1;
         for (BaseFormat baseFormat : baseFormats) {
             if (cropPolicy == ImageCropPolicy.DEFAULT && baseFormat.crop() != ImageCropPolicy.DEFAULT) {
@@ -28,8 +28,8 @@ public class BasesFormat extends ImageFormat {
             if (imageType == ImageType.DEFAULT && baseFormat.type() != ImageType.DEFAULT) {
                 imageType = baseFormat.type();
             }
-            if (imageDexterity < 0 && baseFormat.dexterity() > 0) {
-                imageDexterity = baseFormat.dexterity();
+            if (imageDensity < 0 && baseFormat.density() > 0) {
+                imageDensity = baseFormat.density();
             }
             if (imageQuality < 0 && baseFormat.quality() > 0) {
                 imageQuality = baseFormat.quality();
@@ -39,7 +39,7 @@ public class BasesFormat extends ImageFormat {
         crop = cropPolicy;
         type = imageType;
         quality = imageQuality;
-        dexterity = imageDexterity;
+        density = imageDensity;
     }
 
     @Override
@@ -63,8 +63,8 @@ public class BasesFormat extends ImageFormat {
     }
 
     @Override
-    public float getDexterity() {
-        return dexterity;
+    public float getDensity() {
+        return density;
     }
 
     @Override

@@ -20,7 +20,7 @@ public @interface Format {
 
     float quality() default -1;
 
-    float dexterity() default -1;
+    float density() default -1;
 
     int width();
 

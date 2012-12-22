@@ -1,7 +1,7 @@
 package ru.mirari.infra.image.format;
 
 /**
- * Wraps image size and dexterity
+ * Wraps image size and density
  *
  * @author alari
  * @since 12/21/12 9:15 PM
@@ -9,12 +9,12 @@ package ru.mirari.infra.image.format;
 public class ImageSize {
     final int effectiveWidth;
     final int effectiveHeight;
-    final float dexterity;
+    final float density;
 
-    public ImageSize(int effectiveWidth, int effectiveHeight, float dexterity) {
+    public ImageSize(int effectiveWidth, int effectiveHeight, float density) {
         this.effectiveWidth = effectiveWidth;
         this.effectiveHeight = effectiveHeight;
-        this.dexterity = dexterity;
+        this.density = density;
     }
 
     public int getEffectiveWidth() {
@@ -25,16 +25,16 @@ public class ImageSize {
         return effectiveHeight;
     }
 
-    public float getDexterity() {
-        return dexterity;
+    public float getDensity() {
+        return density;
     }
 
 
     public int getWidth() {
-        return (int)Math.floor(effectiveWidth/dexterity);
+        return (int)Math.floor(effectiveWidth/ density);
     }
 
     public int getHeight() {
-        return (int)Math.floor(effectiveHeight/dexterity);
+        return (int)Math.floor(effectiveHeight/ density);
     }
 }

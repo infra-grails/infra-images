@@ -9,7 +9,7 @@ abstract public class ImageFormat implements Comparable<ImageFormat> {
     abstract public ImageCropPolicy getCrop();
     abstract public ImageType getType();
     abstract public float getQuality();
-    abstract public float getDexterity();
+    abstract public float getDensity();
     abstract public int getWidth();
     abstract public int getHeight();
 
@@ -18,15 +18,15 @@ abstract public class ImageFormat implements Comparable<ImageFormat> {
      * @return
      */
     public int getEffectiveWidth() {
-        return (int) Math.ceil(getWidth()*getDexterity());
+        return (int) Math.ceil(getWidth()* getDensity());
     }
 
     /**
-     * Returns effective image height -- taking dexterity into account
+     * Returns effective image height -- taking density into account
      * @return
      */
     public int getEffectiveHeight() {
-        return (int) Math.ceil(getHeight()*getDexterity());
+        return (int) Math.ceil(getHeight()* getDensity());
     }
 
     /**
@@ -75,18 +75,18 @@ abstract public class ImageFormat implements Comparable<ImageFormat> {
     }
 
     /**
-     * Finds an actual pixel dexterity among provided value, base format, and default fallback
+     * Finds an actual pixel density among provided value, base format, and default fallback
      *
-     * @param dexterity
+     * @param density
      * @param baseFormat
      * @return
      */
-    protected float findActualDexterity(float dexterity, final ImageFormat baseFormat) {
-        if(dexterity > 0) {
-            return dexterity;
+    protected float findActualDensity(float density, final ImageFormat baseFormat) {
+        if(density > 0) {
+            return density;
         }
-        if (baseFormat != null && baseFormat.getDexterity() > 0) {
-            return baseFormat.getDexterity();
+        if (baseFormat != null && baseFormat.getDensity() > 0) {
+            return baseFormat.getDensity();
         }
         return 1;
     }

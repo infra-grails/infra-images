@@ -1,8 +1,8 @@
 class InfraImagesGrailsPlugin {
     // the plugin version
-    def version = "0.1"
+    def version = "0.2-SNAPSHOT"
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "2.0 > *"
+    def grailsVersion = "2.2 > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
@@ -11,7 +11,7 @@ class InfraImagesGrailsPlugin {
     ]
 
     // TODO Fill in these fields
-    def title = "Mirari Image Format Plugin" // Headline display name of the plugin
+    def title = "Infra Images Plugin" // Headline display name of the plugin
     def author = "Dmitry Kurinskiy"
     def authorEmail = "name.alari@gmail.com"
     def description = '''\

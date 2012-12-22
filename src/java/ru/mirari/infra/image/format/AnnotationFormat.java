@@ -13,7 +13,7 @@ public class AnnotationFormat extends ImageFormat {
     private final ImageCropPolicy crop;
     private final ImageType type;
     private final float quality;
-    private final float dexterity;
+    private final float density;
     private final int width;
     private final int height;
 
@@ -25,7 +25,7 @@ public class AnnotationFormat extends ImageFormat {
         crop = findActualCrop(format.crop(), baseFormat);
         type = findActualType(format.type(), baseFormat);
         quality = findActualQuality(format.quality(), baseFormat);
-        dexterity = findActualDexterity(format.dexterity(), baseFormat);
+        density = findActualDensity(format.density(), baseFormat);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class AnnotationFormat extends ImageFormat {
     }
 
     @Override
-    public float getDexterity() {
-        return dexterity;
+    public float getDensity() {
+        return density;
     }
 
     @Override

@@ -3,7 +3,20 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
-grails.plugin.location.'infra-file-storage' = "../infra-file-storage"
+grails.project.repos.default = "internal-snapshot"
+
+grails.project.dependency.distribution = {
+
+    String serverRoot = "http://artifactory.dev/"
+
+    remoteRepository(id: 'internal-snapshot', url: serverRoot + '/plugins-snapshot-local/') {
+        authentication username: 'admin', password: 'password'
+    }
+
+    remoteRepository(id: 'internal-release', url: serverRoot + '/plugins-release-local/') {
+        authentication username: 'admin', password: 'password'
+    }
+}
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -18,11 +31,14 @@ grails.project.dependency.resolution = {
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
         mavenCentral()
-        //mavenLocal()
+        mavenLocal()
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+
+        grailsRepo "http://artifactory.dev/repo", "dev"
+
     }
     dependencies {
         compile "net.coobird:thumbnailator:latest.release"
@@ -32,5 +48,6 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
+        compile ":infra-file-storage:0.2-SNAPSHOT"
     }
 }

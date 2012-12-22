@@ -20,6 +20,9 @@ public @interface ImagesHolder {
     BaseFormat baseFormat() default @BaseFormat;
 
     FilesHolder filesHolder();
+
+    String imagesProperty() default "imagesData";
+
 }
 
 

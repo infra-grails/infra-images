@@ -85,7 +85,7 @@ public class ImageFormat implements Comparable<ImageFormat> {
                         .outputQuality(DEFAULT_QUALITY)
                         .outputFormat(type.toString());
         if (!cropPolicy.isNoCrop()) {
-            builder.crop(cropPolicy.getPosition());
+//            builder.crop(cropPolicy.getPosition());
         }
         builder.toFile(output);
     }
@@ -111,7 +111,7 @@ public class ImageFormat implements Comparable<ImageFormat> {
             }
             return Thumbnails.of(original)
                     .size(size.width, size.height)
-                    .crop(cropPolicy.getPosition())
+//                    .crop(cropPolicy.getPosition())
                     .outputQuality(DEFAULT_QUALITY)
                     .outputFormat(type.toString())
                     .asBufferedImage();

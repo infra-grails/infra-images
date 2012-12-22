@@ -22,12 +22,19 @@ class AnnotatedImageHolder {
         FilesHolder filesHolder = holder.filesHolder()
         Image imageAnnotation = holder.image()
 
-        BasesFormat basesFormat = new BasesFormat([imageAnnotation.baseFormat()])
+        BasesFormat basesFormat = new BasesFormat(imageAnnotation.baseFormat())
         Map<String,ImageFormat> formats = [:]
         for(Format format : imageAnnotation.formats()) {
             formats.put(format.name(), new AnnotationFormat(format, basesFormat))
         }
 
-        image = new ImageBundle("im", formats, basesFormat)
+        image = new ImageBundle(imageAnnotation.name(), formats, basesFormat)
     }
+
+    void store(File image) {}
+
+    String getSrc(){}
+    String getSrc(String formatName){}
+    String getSrc(ImageFormat format){}
+    void delete(){}
 }

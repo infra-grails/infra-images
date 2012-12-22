@@ -14,7 +14,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ImageHolder {
+
     Image image();
 
     FilesHolder filesHolder();
+
+    String imagesProperty() default "imagesData";
 }
