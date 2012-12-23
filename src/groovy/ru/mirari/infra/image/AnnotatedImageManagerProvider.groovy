@@ -11,12 +11,10 @@ import ru.mirari.infra.image.util.ImageBundle
 
 /**
  * @author alari
- * @since 12/21/12 9:53 PM
+ * @since 12/23/12 4:06 PM
  */
-class AnnotatedImageHolder {
-    ImageBundle image
-
-    AnnotatedImageHolder(final def domain) {
+class AnnotatedImageManagerProvider {
+    private build(domain) {
         ImageHolder holder = domain.class.getAnnotation(ImageHolder)
 
         FilesHolder filesHolder = holder.filesHolder()
@@ -28,16 +26,10 @@ class AnnotatedImageHolder {
             formats.put(format.name(), new AnnotationFormat(format, basesFormat))
         }
 
-        image = new ImageBundle(imageAnnotation.name(), formats, basesFormat)
+        ImageBundle image = new ImageBundle(imageAnnotation.name(), formats, basesFormat)
     }
 
-    void store(File image) {}
+    ImageManager getManager(final domain) {
 
-    String getSrc() {}
-
-    String getSrc(String formatName) {}
-
-    String getSrc(ImageFormat format) {}
-
-    void delete() {}
+    }
 }
