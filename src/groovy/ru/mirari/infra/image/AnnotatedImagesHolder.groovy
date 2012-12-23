@@ -8,7 +8,7 @@ import ru.mirari.infra.image.annotations.Image
 import ru.mirari.infra.image.annotations.ImagesHolder
 import ru.mirari.infra.image.format.AnnotationFormat
 import ru.mirari.infra.image.format.BasesFormat
-import ru.mirari.infra.image.format.ImageBundle
+import ru.mirari.infra.image.util.ImageBundle
 
 /**
  * @author alari
@@ -16,7 +16,7 @@ import ru.mirari.infra.image.format.ImageBundle
  */
 class AnnotatedImagesHolder {
     private final BasesFormat basesFormat
-    private Map<String,ImageBundle> images = [:]
+    private Map<String, ImageBundle> images = [:]
 
     final domain
     final AbstractFilesHolder filesHolder
@@ -32,15 +32,15 @@ class AnnotatedImagesHolder {
         BaseFormat base = holder.baseFormat()
         basesFormat = new BasesFormat([base])
 
-        for(Image image : holder.images()) {
-            Map<String,AnnotationFormat> formats = [:]
+        for (Image image : holder.images()) {
+            Map<String, AnnotationFormat> formats = [:]
             BasesFormat imageBase = new BasesFormat([base, image.baseFormat()])
-            for(Format format : image.formats()) {
+            for (Format format : image.formats()) {
                 formats.put(format.name(), new AnnotationFormat(format, imageBase))
             }
             images.put(image.name(), new ImageBundle(image.name(), formats, imageBase))
         }
     }
 
-    void store(File image, String name){}
+    void store(File image, String name) {}
 }

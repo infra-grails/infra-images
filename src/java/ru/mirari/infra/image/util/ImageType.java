@@ -1,4 +1,4 @@
-package ru.mirari.infra.image.format;
+package ru.mirari.infra.image.util;
 
 /**
  * @author Dmitry Kurinskiy
@@ -23,7 +23,7 @@ public enum ImageType {
     }
 
     public String toString() {
-        if(this == DEFAULT) {
+        if (this == DEFAULT) {
             throw new IllegalStateException("You cannot use ImageType.DEFAULT as a real image type; it's just a placeholder for annotations!");
         }
         return isOpenJDK ? "png" : name;

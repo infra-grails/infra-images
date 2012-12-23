@@ -1,6 +1,9 @@
 package ru.mirari.infra.image.format;
 
 import ru.mirari.infra.image.annotations.Format;
+import ru.mirari.infra.image.util.ImageCropPolicy;
+import ru.mirari.infra.image.util.ImageSize;
+import ru.mirari.infra.image.util.ImageType;
 
 /**
  * Wraps @Format annotation with fallback on bases
@@ -13,19 +16,15 @@ public class AnnotationFormat extends ImageFormat {
     private final ImageCropPolicy crop;
     private final ImageType type;
     private final float quality;
-    private final float density;
-    private final int width;
-    private final int height;
+    private final ImageSize size;
 
     public AnnotationFormat(Format format, final ImageFormat baseFormat) {
         name = format.name();
-        width = format.width();
-        height = format.height();
+        size = new ImageSize(format.width(), format.height(), findActualDensity(format.density(), baseFormat));
 
         crop = findActualCrop(format.crop(), baseFormat);
         type = findActualType(format.type(), baseFormat);
         quality = findActualQuality(format.quality(), baseFormat);
-        density = findActualDensity(format.density(), baseFormat);
     }
 
     @Override
@@ -49,17 +48,7 @@ public class AnnotationFormat extends ImageFormat {
     }
 
     @Override
-    public float getDensity() {
-        return density;
-    }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
+    public ImageSize getSize() {
+        return size;
     }
 }

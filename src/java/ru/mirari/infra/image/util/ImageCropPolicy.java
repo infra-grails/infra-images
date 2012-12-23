@@ -1,6 +1,4 @@
-package ru.mirari.infra.image.format;
-
-import net.coobird.thumbnailator.geometry.Positions;
+package ru.mirari.infra.image.util;
 
 /**
  * @author Dmitry Kurinskiy

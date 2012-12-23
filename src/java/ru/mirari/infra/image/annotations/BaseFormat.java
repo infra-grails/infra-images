@@ -1,7 +1,7 @@
 package ru.mirari.infra.image.annotations;
 
-import ru.mirari.infra.image.format.ImageCropPolicy;
-import ru.mirari.infra.image.format.ImageType;
+import ru.mirari.infra.image.util.ImageCropPolicy;
+import ru.mirari.infra.image.util.ImageType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

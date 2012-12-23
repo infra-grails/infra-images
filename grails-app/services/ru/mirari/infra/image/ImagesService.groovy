@@ -6,7 +6,11 @@ class ImagesService {
 
     def fileStorageService
 
-    def serviceMethod() {
+    ImageManager getImageManager(final holder) {
+
+    }
+
+    ImagesManager getImagesManager(final holder) {
 
     }
 }

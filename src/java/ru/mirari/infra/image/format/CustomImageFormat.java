@@ -1,5 +1,9 @@
 package ru.mirari.infra.image.format;
 
+import ru.mirari.infra.image.util.ImageCropPolicy;
+import ru.mirari.infra.image.util.ImageSize;
+import ru.mirari.infra.image.util.ImageType;
+
 /**
  * @author alari
  * @since 12/23/12 2:24 AM
@@ -9,13 +13,10 @@ public class CustomImageFormat extends ImageFormat {
     private ImageCropPolicy crop = ImageCropPolicy.DEFAULT;
     private ImageType type = ImageType.DEFAULT;
     private float quality = -1;
-    private float density = -1;
-    private int width;
-    private int height;
+    private ImageSize size;
 
-    public CustomImageFormat(int width, int height) {
-        this.width = width;
-        this.height = height;
+    public CustomImageFormat(int width, int height, float density) {
+        size = new ImageSize(width, height, density);
     }
 
     public void setName(String name) {
@@ -34,31 +35,23 @@ public class CustomImageFormat extends ImageFormat {
         this.quality = quality;
     }
 
-    public void setDensity(float density) {
-        this.density = density;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     @Override
     public String getName() {
-        if(name == null || name.isEmpty()) {
+        if (name == null || name.isEmpty()) {
             synchronized (this) {
-                if(name == null || name.isEmpty()) {
+                if (name == null || name.isEmpty()) {
                     name = crop.name() + "-";
-                    name += Integer.toString(width) + "x" + Integer.toString(height);
-                    name += "_"+Float.toHexString(quality);
-                    name += "_"+Float.toHexString(density);
+                    name += size.toString();
+                    name += "_" + Float.toHexString(quality);
                 }
             }
         }
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override
@@ -77,17 +70,11 @@ public class CustomImageFormat extends ImageFormat {
     }
 
     @Override
-    public float getDensity() {
-        return density;
+    public ImageSize getSize() {
+        return size;
     }
 
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
+    public void setSize(ImageSize size) {
+        this.size = size;
     }
 }

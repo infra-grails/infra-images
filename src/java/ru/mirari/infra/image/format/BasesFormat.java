@@ -1,6 +1,9 @@
 package ru.mirari.infra.image.format;
 
 import ru.mirari.infra.image.annotations.BaseFormat;
+import ru.mirari.infra.image.util.ImageCropPolicy;
+import ru.mirari.infra.image.util.ImageSize;
+import ru.mirari.infra.image.util.ImageType;
 
 /**
  * Wraps @BaseFormat annotations to behave effectively as an image format
@@ -12,9 +15,9 @@ public class BasesFormat extends ImageFormat {
     private final ImageCropPolicy crop;
     private final ImageType type;
     private final float quality;
-    private final float density;
+    private final ImageSize size;
 
-    public BasesFormat(BaseFormat[] baseFormats) {
+    public BasesFormat(BaseFormat... baseFormats) {
 
         // check from bases if default
         ImageCropPolicy cropPolicy = ImageCropPolicy.DEFAULT;
@@ -39,7 +42,7 @@ public class BasesFormat extends ImageFormat {
         crop = cropPolicy;
         type = imageType;
         quality = imageQuality;
-        density = imageDensity;
+        size = new ImageSize(0, 0, imageDensity);
     }
 
     @Override
@@ -62,18 +65,8 @@ public class BasesFormat extends ImageFormat {
         return quality;
     }
 
-    @Override
-    public float getDensity() {
-        return density;
-    }
 
-    @Override
-    public int getWidth() {
-        return 0;
-    }
-
-    @Override
-    public int getHeight() {
-        return 0;
+    public ImageSize getSize() {
+        return size;
     }
 }

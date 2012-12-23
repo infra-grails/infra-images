@@ -10,6 +10,7 @@ import ru.mirari.infra.image.formatter.ImageFormatter
  */
 abstract class AbstractImagesHolder {
     abstract FileStorage getFileStorage()
+
     abstract ImageFormatter getImageFormatter()
 
     def store(File imageFile, String imageName, String formatName = null) {
@@ -17,7 +18,7 @@ abstract class AbstractImagesHolder {
     }
 
     def store(File imageFile, ImageFormat format) {
-      fileStorage.store(imageFormatter.format(imageFile, format), )
+        fileStorage.store(imageFormatter.format(imageFile, format),)
     }
 
     String getFileName(ImageFormat format) {

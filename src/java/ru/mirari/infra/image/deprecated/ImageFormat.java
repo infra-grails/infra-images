@@ -1,8 +1,8 @@
 package ru.mirari.infra.image.deprecated;
 
 import net.coobird.thumbnailator.Thumbnails;
-import ru.mirari.infra.image.format.ImageCropPolicy;
-import ru.mirari.infra.image.format.ImageType;
+import ru.mirari.infra.image.util.ImageCropPolicy;
+import ru.mirari.infra.image.util.ImageType;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

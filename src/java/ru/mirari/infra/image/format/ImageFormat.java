@@ -1,44 +1,23 @@
 package ru.mirari.infra.image.format;
 
+import ru.mirari.infra.image.util.ImageCropPolicy;
+import ru.mirari.infra.image.util.ImageSize;
+import ru.mirari.infra.image.util.ImageType;
+
 /**
  * @author alari
  * @since 12/21/12 4:42 PM
  */
-abstract public class ImageFormat implements Comparable<ImageFormat> {
+abstract public class ImageFormat {
     abstract public String getName();
+
     abstract public ImageCropPolicy getCrop();
+
     abstract public ImageType getType();
+
     abstract public float getQuality();
-    abstract public float getDensity();
-    abstract public int getWidth();
-    abstract public int getHeight();
 
-    /**
-     * Returns effective image width -- taking pixel into account
-     * @return
-     */
-    public int getEffectiveWidth() {
-        return (int) Math.ceil(getWidth()* getDensity());
-    }
-
-    /**
-     * Returns effective image height -- taking density into account
-     * @return
-     */
-    public int getEffectiveHeight() {
-        return (int) Math.ceil(getHeight()* getDensity());
-    }
-
-    /**
-     * Compares formats based on its sizes
-     *
-     * @param o
-     * @return
-     */
-    @Override
-    public int compareTo(ImageFormat o) {
-        return getWidth() > o.getWidth() && getHeight() > o.getHeight() ? 1 : -1;
-    }
+    abstract public ImageSize getSize();
 
     /**
      * Finds an actual crop policy among provided value, base format, and default fallback
@@ -48,10 +27,10 @@ abstract public class ImageFormat implements Comparable<ImageFormat> {
      * @return
      */
     protected ImageCropPolicy findActualCrop(final ImageCropPolicy cropPolicy, final ImageFormat baseFormat) {
-        if(cropPolicy != ImageCropPolicy.DEFAULT) {
+        if (cropPolicy != ImageCropPolicy.DEFAULT) {
             return cropPolicy;
         }
-        if(baseFormat != null && baseFormat.getCrop() != ImageCropPolicy.DEFAULT) {
+        if (baseFormat != null && baseFormat.getCrop() != ImageCropPolicy.DEFAULT) {
             return baseFormat.getCrop();
         }
         return ImageCropPolicy.NONE;
@@ -65,7 +44,7 @@ abstract public class ImageFormat implements Comparable<ImageFormat> {
      * @return
      */
     protected ImageType findActualType(final ImageType imageType, final ImageFormat baseFormat) {
-        if(imageType == ImageType.DEFAULT) {
+        if (imageType == ImageType.DEFAULT) {
             return imageType;
         }
         if (baseFormat != null && baseFormat.getType() != ImageType.DEFAULT) {
@@ -82,11 +61,11 @@ abstract public class ImageFormat implements Comparable<ImageFormat> {
      * @return
      */
     protected float findActualDensity(float density, final ImageFormat baseFormat) {
-        if(density > 0) {
+        if (density > 0) {
             return density;
         }
-        if (baseFormat != null && baseFormat.getDensity() > 0) {
-            return baseFormat.getDensity();
+        if (baseFormat != null && baseFormat.getSize().getDensity() > 0) {
+            return baseFormat.getSize().getDensity();
         }
         return 1;
     }
@@ -99,7 +78,7 @@ abstract public class ImageFormat implements Comparable<ImageFormat> {
      * @return
      */
     protected float findActualQuality(float quality, final ImageFormat baseFormat) {
-        if(quality > 0) {
+        if (quality > 0) {
             return quality;
         }
         if (baseFormat != null && baseFormat.getQuality() > 0) {

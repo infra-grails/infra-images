@@ -4,12 +4,11 @@ import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.stereotype.Component;
-import ru.mirari.infra.image.format.ImageCropPolicy;
 import ru.mirari.infra.image.format.ImageFormat;
-import ru.mirari.infra.image.format.ImageType;
+import ru.mirari.infra.image.util.ImageBox;
+import ru.mirari.infra.image.util.ImageCropPolicy;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -19,34 +18,15 @@ import java.io.IOException;
 @Component
 public class ThumbnailatorFormatter extends ImageFormatter {
     @Override
-    public BufferedImage format(final BufferedImage image, ImageFormat format) throws IOException {
-        // Too small to resize
-        if (image.getWidth() <= format.getEffectiveWidth() && image.getHeight() <= format.getEffectiveHeight()) {
-            return image;
-        }
-
-        if (format.getCrop().isNoCrop()) {
-            return Thumbnails.of(image)
-                    .size(format.getEffectiveWidth(), format.getEffectiveHeight())
-                    .outputQuality(format.getQuality())
-                    .outputFormat(format.getType().toString())
-                    .asBufferedImage();
-        }
-        return Thumbnails.of(image)
-                .size(format.getEffectiveWidth(), format.getEffectiveHeight())
-                .crop(getPosition(format.getCrop()))
+    public ImageBox format(ImageFormat format, final ImageBox original, int mode) throws IOException {
+        Thumbnails.Builder<BufferedImage> builder = Thumbnails.of(original.getBuffered())
+                .size(format.getSize().getRealWidth(), format.getSize().getRealHeight())
                 .outputQuality(format.getQuality())
-                .outputFormat(format.getType().toString())
-                .asBufferedImage();
-    }
-
-    @Override
-    public void write(final BufferedImage image, File target, ImageType type, float quality) throws IOException {
-        Thumbnails.of(image)
-                .scale(1)
-                .outputQuality(quality)
-                .outputFormat(type.toString())
-                .toFile(target);
+                .outputFormat(format.getType().toString());
+        if (!format.getCrop().isNoCrop()) {
+            return new ImageBox(builder.crop(getPosition(format.getCrop())).asBufferedImage(), null);
+        }
+        return new ImageBox(builder.crop(getPosition(format.getCrop())).asBufferedImage(), format.getSize());
     }
 
     private Position getPosition(ImageCropPolicy policy) {

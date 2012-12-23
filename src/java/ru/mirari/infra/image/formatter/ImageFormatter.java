@@ -1,11 +1,8 @@
 package ru.mirari.infra.image.formatter;
 
 import ru.mirari.infra.image.format.ImageFormat;
-import ru.mirari.infra.image.format.ImageType;
+import ru.mirari.infra.image.util.ImageBox;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -13,19 +10,8 @@ import java.io.IOException;
  * @since 12/21/12 4:43 PM
  */
 abstract public class ImageFormatter {
-    abstract public BufferedImage format(BufferedImage image, ImageFormat format) throws IOException;
+    final static public int MODE_BUFFERED = 1;
+    final static public int MODE_FILE = 2;
 
-    abstract public void write(final BufferedImage image, File target, ImageType type, float quality) throws IOException;
-
-    public File format(File image, ImageFormat format) throws IOException {
-        File target = File.createTempFile("image", "sfx");
-        BufferedImage bufferedImage = formatToBuffer(image, format);
-        write(bufferedImage, target, format.getType(), format.getQuality());
-        return target;
-    }
-
-    public BufferedImage formatToBuffer(final File image, final ImageFormat format) throws IOException {
-        BufferedImage bufferedImage = ImageIO.read(image);
-        return format(bufferedImage, format);
-    }
+    abstract public ImageBox format(ImageFormat format, ImageBox original, int mode) throws IOException;
 }
