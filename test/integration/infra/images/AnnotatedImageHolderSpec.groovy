@@ -12,6 +12,7 @@ import ru.mirari.infra.image.format.CustomImageFormat
 import ru.mirari.infra.image.format.ImageFormat
 import ru.mirari.infra.image.util.ImageCropPolicy
 import ru.mirari.infra.image.util.ImageType
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Stepwise
 
@@ -19,6 +20,7 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
 @Stepwise
+@Ignore
 class AnnotatedImageHolderSpec extends IntegrationSpec {
 
     @Shared ImageManager imageManager
@@ -39,11 +41,9 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
     )
     )
     private class Holder {
-        Map<String, String> imagesData
-        Collection<String> fileNames
     }
 
-    def setup() {
+    def setupSpec() {
         imageFile = new ClassPathResource("test.png", this.class).getFile();
     }
 

@@ -6,7 +6,7 @@ class ImagesService {
 
     def fileStorageService
 
-    ImageManager getImageManager(final holder) {
+    ImageManager getImageManager(final holder, boolean imageDomains = false) {
 
     }
 

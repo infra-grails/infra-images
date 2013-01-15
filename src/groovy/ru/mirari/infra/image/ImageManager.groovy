@@ -16,4 +16,10 @@ abstract class ImageManager {
     abstract getSrc(ImageFormat format)
 
     abstract void delete()
+
+    abstract getSize()
+
+    abstract getSize(String formatName)
+
+    abstract getSize(ImageFormat format)
 }
