@@ -79,7 +79,9 @@ class AnnotatedImageManagerProvider {
             Manager(def domain, ImageFormatter imageFormatter) {
                 this.domain = domain
                 formatter = imageFormatter
-                manager = new BasicImageManager(getFilesManager(domain), imageBundle, formatter)
+                ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, formatter)
+                if(storeDomains) m = new DomainImageManager(m)
+                manager = m
             }
         }
     }
