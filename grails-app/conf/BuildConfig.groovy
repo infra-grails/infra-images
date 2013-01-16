@@ -5,7 +5,7 @@ grails.project.test.reports.dir = "target/test-reports"
 
 grails.project.repos.default = "quonb-snapshot"
 
-grails.plugin.location.'infra-file-storage' = "../infra-file-storage"
+//grails.plugin.location.'infra-file-storage' = "../infra-file-storage"
 
 grails.project.dependency.distribution = {
     String serverRoot = "http://mvn.quonb.org"
@@ -38,7 +38,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        //compile ":infra-file-storage:0.2-SNAPSHOT"
+        compile ":infra-file-storage:0.2-SNAPSHOT"
 
         build(":tomcat:$grailsVersion",
                 ":release:latest.release") {
