@@ -3,6 +3,16 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
+grails.project.repos.default = "quonb-snapshot"
+
+grails.plugin.location.'infra-file-storage' = "../infra-file-storage"
+
+grails.project.dependency.distribution = {
+    String serverRoot = "http://mvn.quonb.org"
+    remoteRepository(id: 'quonb-snapshot', url: serverRoot + '/plugins-snapshot-local/')
+    remoteRepository(id: 'quonb-release', url: serverRoot + '/plugins-release-local/')
+}
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -12,23 +22,37 @@ grails.project.dependency.resolution = {
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
         grailsCentral()
-        mavenRepo "http://artifactory.dev/repo"
-        // uncomment the below to enable remote dependency resolution
-        // from public Maven repositories
+
         mavenCentral()
-        //mavenLocal()
-        //mavenRepo "http://snapshots.repository.codehaus.org"
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenLocal()
+
+        mavenRepo "http://mvn.quonb.org/repo"
+        grailsRepo "http://mvn.quonb.org/repo", "quonb"
     }
     dependencies {
         compile "net.coobird:thumbnailator:latest.release"
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
-        // runtime 'mysql:mysql-connector-java:5.1.5'
+        test("org.spockframework:spock-grails-support:0.7-groovy-2.0") {
+            export = false
+        }
     }
 
     plugins {
+        //compile ":infra-file-storage:0.2-SNAPSHOT"
+
+        build(":tomcat:$grailsVersion",
+                ":release:latest.release") {
+            export = false
+        }
+        runtime(":hibernate:$grailsVersion") {
+            export = false
+        }
+
+        //compile ":platform-core:latest.release"
+
+        test(":spock:latest.release") {
+            exclude "spock-grails-support"
+            export = false
+        }
     }
 }

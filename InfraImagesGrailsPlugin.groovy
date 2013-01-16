@@ -1,6 +1,6 @@
 class InfraImagesGrailsPlugin {
     // the plugin version
-    def version = "0.1"
+    def version = "0.2-SNAPSHOT"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.0 > *"
     // the other plugins this plugin depends on
@@ -11,7 +11,7 @@ class InfraImagesGrailsPlugin {
     ]
 
     // TODO Fill in these fields
-    def title = "Mirari Image Format Plugin" // Headline display name of the plugin
+    def title = "Infra Images Plugin" // Headline display name of the plugin
     def author = "Dmitry Kurinskiy"
     def authorEmail = "name.alari@gmail.com"
     def description = '''\
@@ -43,7 +43,8 @@ Image resizer, reformatter, and storage routine. May depend on mirari-infra-file
     }
 
     def doWithSpring = {
-        // TODO Implement runtime spring config (optional)
+        xmlns context: "http://www.springframework.org/schema/context"
+        context.'component-scan'('base-package': "infra.images")
     }
 
     def doWithDynamicMethods = { ctx ->
