@@ -43,7 +43,8 @@ Image resizer, reformatter, and storage routine. May depend on mirari-infra-file
     }
 
     def doWithSpring = {
-        // TODO Implement runtime spring config (optional)
+        xmlns context: "http://www.springframework.org/schema/context"
+        context.'component-scan'('base-package': "infra.images")
     }
 
     def doWithDynamicMethods = { ctx ->

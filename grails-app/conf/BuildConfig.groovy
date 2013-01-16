@@ -5,6 +5,8 @@ grails.project.test.reports.dir = "target/test-reports"
 
 grails.project.repos.default = "quonb-snapshot"
 
+grails.plugin.location.'infra-file-storage' = "../infra-file-storage"
+
 grails.project.dependency.distribution = {
     String serverRoot = "http://mvn.quonb.org"
     remoteRepository(id: 'quonb-snapshot', url: serverRoot + '/plugins-snapshot-local/')
@@ -29,9 +31,28 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         compile "net.coobird:thumbnailator:latest.release"
+
+        test("org.spockframework:spock-grails-support:0.7-groovy-2.0") {
+            export = false
+        }
     }
 
     plugins {
-        compile ":infra-file-storage:0.2-SNAPSHOT"
+        //compile ":infra-file-storage:0.2-SNAPSHOT"
+
+        build(":tomcat:$grailsVersion",
+                ":release:latest.release") {
+            export = false
+        }
+        runtime(":hibernate:$grailsVersion") {
+            export = false
+        }
+
+        //compile ":platform-core:latest.release"
+
+        test(":spock:latest.release") {
+            exclude "spock-grails-support"
+            export = false
+        }
     }
 }

@@ -2,17 +2,15 @@ package infra.images
 
 import grails.plugin.spock.IntegrationSpec
 import org.springframework.core.io.ClassPathResource
-import ru.mirari.infra.file.FilesHolder
-import ru.mirari.infra.image.ImageManager
-import ru.mirari.infra.image.annotations.BaseFormat
-import ru.mirari.infra.image.annotations.Format
-import ru.mirari.infra.image.annotations.Image
-import ru.mirari.infra.image.annotations.ImageHolder
-import ru.mirari.infra.image.format.CustomImageFormat
-import ru.mirari.infra.image.format.ImageFormat
-import ru.mirari.infra.image.util.ImageCropPolicy
-import ru.mirari.infra.image.util.ImageType
-import spock.lang.Ignore
+import infra.file.storage.FilesHolder
+import infra.images.annotations.BaseFormat
+import infra.images.annotations.Format
+import infra.images.annotations.Image
+import infra.images.annotations.ImageHolder
+import infra.images.format.CustomFormat
+import infra.images.format.ImageFormat
+import infra.images.util.ImageCropPolicy
+import infra.images.util.ImageType
 import spock.lang.Shared
 import spock.lang.Stepwise
 
@@ -20,7 +18,6 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
 @Stepwise
-@Ignore
 class AnnotatedImageHolderSpec extends IntegrationSpec {
 
     @Shared ImageManager imageManager
@@ -37,7 +34,7 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
     @Format(name = "fit", crop = ImageCropPolicy.NONE, width = 192, height = 192)
     ]),
     filesHolder = @FilesHolder(
-    path = { "pth" }
+    path = { "pth/im" }
     )
     )
     private class Holder {
@@ -68,7 +65,7 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
 
         File custom
 
-        ImageFormat customFormat = new CustomImageFormat(125, 125)
+        ImageFormat customFormat = new CustomFormat(125, 125, 1f)
 
         expect: "at first files does not exists"
         !original.exists()
@@ -76,7 +73,7 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         !fit.exists()
 
         when: "we try to store an image"
-        imageManager.store(imageFile)
+        println imageManager.store(imageFile)
 
         then: "image files exist and are of correct sizes"
         // files...
@@ -119,7 +116,7 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         !custom.exists()
     }
 
-    private assertImageSize(File image, int width, int height) {
+    private void assertImageSize(File image, int width, int height) {
         final BufferedImage bimg = ImageIO.read(image);
         assert bimg.width == width
         assert bimg.height == height
