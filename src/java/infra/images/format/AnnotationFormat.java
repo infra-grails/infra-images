@@ -20,7 +20,7 @@ public class AnnotationFormat extends ImageFormat {
 
     public AnnotationFormat(Format format, final ImageFormat baseFormat) {
         name = format.name();
-        size = new ImageSize(format.width(), format.height(), findActualDensity(format.density(), baseFormat));
+        size = ImageSize.buildFormat(format.width(), format.height(), findActualDensity(format.density(), baseFormat));
 
         crop = findActualCrop(format.crop(), baseFormat);
         type = findActualType(format.type(), baseFormat);

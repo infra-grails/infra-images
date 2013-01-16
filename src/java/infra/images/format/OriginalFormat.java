@@ -12,7 +12,7 @@ public class OriginalFormat extends ImageFormat {
     private final String name;
     private final ImageType type;
     private final float quality;
-    static private final ImageSize SIZE = new ImageSize(0, 0, 1);
+    static private final ImageSize SIZE = ImageSize.buildFormat(0, 0, 1);
 
     public OriginalFormat(String name, final ImageFormat baseFormat) {
         this.name = name;

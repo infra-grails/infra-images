@@ -17,7 +17,7 @@ class ImageDomain {
     }
 
     ImageSize asSize() {
-        new ImageSize(width, height, density)
+        ImageSize.buildReal(width, height, density)
     }
 
     void forSize(ImageSize size) {

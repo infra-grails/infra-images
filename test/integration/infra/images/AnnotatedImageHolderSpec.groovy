@@ -41,7 +41,12 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
     }
 
     def setupSpec() {
+        new File("web-app/f").deleteDir()
         imageFile = new ClassPathResource("test.png", this.class).getFile();
+    }
+
+    def cleanupSpec() {
+        new File("web-app/f").deleteDir()
     }
 
     def "we can build a holder"() {

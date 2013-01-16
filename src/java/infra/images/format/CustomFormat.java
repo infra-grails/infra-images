@@ -16,7 +16,7 @@ public class CustomFormat extends ImageFormat {
     private ImageSize size;
 
     public CustomFormat(int width, int height, float density) {
-        size = new ImageSize(width, height, density);
+        size = ImageSize.buildFormat(width, height, density);
     }
 
     public void setName(String name) {
@@ -33,6 +33,16 @@ public class CustomFormat extends ImageFormat {
 
     public void setQuality(float quality) {
         this.quality = quality;
+    }
+
+    public void setBaseFormat(ImageFormat baseFormat) {
+        crop = findActualCrop(crop, baseFormat);
+        type = findActualType(type, baseFormat);
+        quality = findActualQuality(quality, baseFormat);
+        float density = findActualDensity(0f, baseFormat);
+        if(size.getDensity() != density) {
+            size = ImageSize.buildReal(size.getRealWidth(), size.getRealHeight(), density);
+        }
     }
 
     @Override

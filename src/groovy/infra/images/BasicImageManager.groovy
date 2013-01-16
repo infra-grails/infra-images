@@ -1,6 +1,7 @@
 package infra.images
 
 import infra.file.storage.FilesManager
+import infra.images.format.CustomFormat
 import infra.images.format.ImageFormat
 import infra.images.formatter.ImageFormatter
 import infra.images.util.ImageBox
@@ -9,6 +10,8 @@ import infra.images.util.ImageSize
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import java.nio.channels.Channels
+import java.nio.channels.ReadableByteChannel
 
 /**
  * @author alari
@@ -18,6 +21,7 @@ class BasicImageManager implements ImageManager {
     private final FilesManager filesManager
     private final ImageFormatsBundle imageBundle
     private final ImageFormatter imageFormatter
+    private ImageBox originalImage
 
     BasicImageManager(FilesManager filesManager, ImageFormatsBundle imageBundle, ImageFormatter imageFormatter) {
         this.filesManager = filesManager
@@ -28,30 +32,47 @@ class BasicImageManager implements ImageManager {
     @Override
     Map<String,ImageSize> store(File image) {
         delete()
-        ImageBox original = new ImageBox(image)
+        originalImage = new ImageBox(image)
         Map<String,ImageSize> fileSizes = [:]
 
         // TODO: use GPars
         for(ImageFormat format in imageBundle.formats.values()) {
-            ImageBox box = imageFormatter.format(format, original)
+            ImageBox box = imageFormatter.format(format, originalImage)
             fileSizes.put(filesManager.store(box.file, format.filename), box.size)
         }
 
         fileSizes
     }
 
+    private void loadOriginal() {
+        originalImage = new ImageBox(filesManager.getFile(imageBundle.original.filename))
+    }
+
     @Override
     String getSrc() {
-        filesManager.getUrl(imageBundle.original)
+        getExistentFormatSrc(imageBundle.original)
     }
 
     @Override
     String getSrc(String formatName) {
-        getSrc(getFormat(formatName))
+        getExistentFormatSrc(getFormat(formatName))
     }
 
     @Override
     String getSrc(ImageFormat format) {
+        if(format instanceof CustomFormat) {
+            format.setBaseFormat(imageBundle.basesFormat)
+            if (!filesManager.exists(format.filename)) {
+                loadOriginal()
+                ImageBox box = imageFormatter.format(format, originalImage)
+                // TODO: leave callback for cache
+                filesManager.store(box.file, format.filename)
+            }
+        }
+        filesManager.getUrl(format.filename)
+    }
+
+    private String getExistentFormatSrc(ImageFormat format) {
         filesManager.getUrl(format.filename)
     }
 
@@ -62,7 +83,7 @@ class BasicImageManager implements ImageManager {
 
     @Override
     ImageSize getSize() {
-        getSizeBySrc(imageBundle.original)
+        getSize(imageBundle.original)
     }
 
     @Override
@@ -76,6 +97,9 @@ class BasicImageManager implements ImageManager {
     }
 
     protected ImageFormat getFormat(String formatName) {
+        if (!imageBundle.formats.containsKey(formatName)) {
+            throw new IllegalArgumentException("Format ${formatName} is not defined by name")
+        }
         imageBundle.formats.get(formatName)
     }
 
@@ -83,7 +107,7 @@ class BasicImageManager implements ImageManager {
         URL url = new URL(src)
         final BufferedImage bimg = ImageIO.read(url);
         if (bimg) {
-            return new ImageSize(bimg.width, bimg.height, density)
+            return ImageSize.buildReal(bimg.width, bimg.height, density)
         }
         null
     }

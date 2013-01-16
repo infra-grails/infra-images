@@ -12,6 +12,18 @@ public class ImageSize {
     final float density;
     final String name;
 
+    static public ImageSize buildReal(int realWidth, int realHeight) {
+        return new ImageSize(realWidth, realHeight, 1f);
+    }
+
+    static public ImageSize buildReal(int realWidth, int realHeight, float density) {
+        return new ImageSize(realWidth, realHeight, density);
+    }
+
+    static public ImageSize buildFormat(int width, int height, float density) {
+        return new ImageSize((int)Math.ceil(width*density), (int)Math.ceil(height*density), density);
+    }
+
     public ImageSize(int realWidth, int realHeight, float density) {
         this.realWidth = realWidth;
         this.realHeight = realHeight;

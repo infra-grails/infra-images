@@ -42,7 +42,7 @@ public class BasesFormat extends ImageFormat {
         crop = cropPolicy;
         type = imageType;
         quality = imageQuality;
-        size = new ImageSize(0, 0, imageDensity);
+        size = ImageSize.buildFormat(0, 0, imageDensity);
     }
 
     @Override
