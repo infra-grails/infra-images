@@ -13,13 +13,14 @@ import infra.images.util.ImageSize
  */
 class DomainImageManager implements ImageManager {
     private final ImageManager manager
+    private final Map<String, ImageDomain> imageDomainMap = [:]
 
     DomainImageManager(ImageManager manager) {
         if (!manager.filesManager instanceof DomainFilesManager) {
             throw new IllegalArgumentException("To use DomainImageManager you have to use DomainFilesManager; but instance of ${manager.class.name} given")
         }
         this.manager = manager
-        this.manager.onStoreFile {ImageBox image, ImageFormat format->
+        this.manager.onStoreFile { ImageBox image, ImageFormat format ->
             FileDomain fileDomain = filesManager.getDomain(format.filename)
 
             assert fileDomain
@@ -27,6 +28,7 @@ class DomainImageManager implements ImageManager {
             ImageDomain imageDomain = ImageDomain.findOrSaveByFile(fileDomain)
             imageDomain.forSize(image.size)
             imageDomain.save(failOnError: true)
+            imageDomainMap.put(format.filename, imageDomain)
 
             assert imageDomain.id
         }
@@ -39,14 +41,24 @@ class DomainImageManager implements ImageManager {
 
     @Override
     ImageSize getSize(ImageFormat format) {
-        if (filesManager.exists(format.filename)) {
-            ImageDomain.findByFile(filesManager.getDomain(format.filename)).asSize()
-        } else return format.size
+        ImageDomain imageDomain = getDomain(format.filename)
+        imageDomain ? imageDomain.asSize() : format.size
+    }
+
+    ImageDomain getDomain(String filename) {
+        if (!imageDomainMap.containsKey(filename)) {
+            if (filesManager.exists(filename)) {
+                imageDomainMap.put(filename, ImageDomain.findByFile(filesManager.getDomain(filename)))
+            } else {
+                imageDomainMap.put filename, null
+            }
+        }
+        imageDomainMap.get(filename)
     }
 
     @Override
     DomainFilesManager getFilesManager() {
-        (DomainFilesManager)manager.filesManager
+        (DomainFilesManager) manager.filesManager
     }
 
     //
@@ -57,7 +69,8 @@ class DomainImageManager implements ImageManager {
     @Override
     Map<String, ImageSize> store(File image) {
         filesManager.fileNames.each {
-            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+            getDomain(it)?.delete(flush: true)
+            imageDomainMap.remove(it)
         }
         manager.store(image)
     }
@@ -80,7 +93,8 @@ class DomainImageManager implements ImageManager {
     @Override
     void delete() {
         filesManager.fileNames.each {
-            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+            getDomain(it)?.delete(flush: true)
+            imageDomainMap.remove(it)
         }
         manager.delete()
     }
