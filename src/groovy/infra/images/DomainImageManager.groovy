@@ -75,6 +75,9 @@ class DomainImageManager implements ImageManager {
 
     @Override
     void delete() {
+        filesManager.fileNames.each {
+            ImageDomain.findByFile(filesManager.getDomain(it))?.delete()
+        }
         manager.delete()
     }
 

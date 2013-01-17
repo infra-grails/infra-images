@@ -22,7 +22,7 @@ public @interface Format {
 
     float density() default -1;
 
-    int width();
+    int width() default 0;
 
-    int height();
+    int height() default 0;
 }
