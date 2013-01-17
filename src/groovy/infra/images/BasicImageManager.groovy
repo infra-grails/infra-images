@@ -11,8 +11,7 @@ import infra.images.util.ImageSize
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.nio.channels.Channels
-import java.nio.channels.ReadableByteChannel
+import java.util.logging.Logger
 
 /**
  * @author alari
@@ -24,6 +23,8 @@ class BasicImageManager implements ImageManager {
     private final ImageFormatter imageFormatter
     private ImageBox originalImage
     private List<Closure> onStoreFileCallbacks = []
+
+    private static final Logger log = Logger.getLogger(this.canonicalName)
 
     BasicImageManager(FilesManager filesManager, ImageFormatsBundle imageBundle, ImageFormatter imageFormatter) {
         this.filesManager = filesManager
@@ -42,15 +43,15 @@ class BasicImageManager implements ImageManager {
     }
 
     @Override
-    Map<String,ImageSize> store(File image) {
+    Map<String, ImageSize> store(File image) {
         delete()
         originalImage = new ImageBox(image)
-        Map<String,ImageSize> fileSizes = [:]
+        Map<String, ImageSize> fileSizes = [:]
 
         // TODO: use GPars
-        for(ImageFormat format in imageBundle.formats.values()) {
+        for (ImageFormat format in imageBundle.formats.values()) {
             ImageBox box = imageFormatter.format(format, originalImage)
-            fileSizes.put(storeFile(box,format), box.size)
+            fileSizes.put(storeFile(box, format), box.size)
         }
 
         fileSizes
@@ -58,7 +59,7 @@ class BasicImageManager implements ImageManager {
 
     private String storeFile(ImageBox image, ImageFormat format) {
         filesManager.store(image.file, format.filename)
-        for(Closure c in onStoreFileCallbacks) {
+        for (Closure c in onStoreFileCallbacks) {
             c.call(image, format)
         }
     }
@@ -79,7 +80,7 @@ class BasicImageManager implements ImageManager {
 
     @Override
     String getSrc(ImageFormat format) {
-        if(format instanceof CustomFormat) {
+        if (format instanceof CustomFormat) {
             format.setBaseFormat(imageBundle.basesFormat)
             if (!filesManager.exists(format.filename)) {
                 loadOriginal()
@@ -116,7 +117,7 @@ class BasicImageManager implements ImageManager {
                 final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
                 if (bimg) {
                     return ImageSize.buildReal(bimg.width, bimg.height, format.density)
-                }
+                } else return format.size
             }
         }
         getSizeBySrc(getSrc(format), format.density)
@@ -135,11 +136,15 @@ class BasicImageManager implements ImageManager {
     }
 
     private static ImageSize getSizeBySrc(String src, float density) {
-        URL url = new URL(src)
-        final BufferedImage bimg = ImageIO.read(url);
-        if (bimg) {
-            return ImageSize.buildReal(bimg.width, bimg.height, density)
+        try {
+            URL url = new URL(src)
+            final BufferedImage bimg = ImageIO.read(url);
+            if (bimg) {
+                return ImageSize.buildReal(bimg.width, bimg.height, density)
+            }
+        } catch (Exception e) {
+            log.info "Image file not found: ${src}"
         }
-        null
+        ImageSize.buildReal(0, 0)
     }
 }
