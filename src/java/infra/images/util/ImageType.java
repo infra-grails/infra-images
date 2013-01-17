@@ -24,7 +24,8 @@ public enum ImageType {
 
     public String toString() {
         if (this == DEFAULT) {
-            throw new IllegalStateException("You cannot use ImageType.DEFAULT as a real image type; it's just a placeholder for annotations!");
+            System.out.println("You cannot use ImageType.DEFAULT as a real image type; it's just a placeholder for annotations!");
+            return "png";
         }
         return isOpenJDK ? "png" : name;
     }
