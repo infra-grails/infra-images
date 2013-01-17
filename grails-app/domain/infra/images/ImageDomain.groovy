@@ -8,9 +8,7 @@ class ImageDomain {
     int width
     float density
 
-    FileDomain file
-
-    static belongsTo = FileDomain
+    static belongsTo = [file:FileDomain]
 
     static constraints = {
         file unique: true
