@@ -55,6 +55,9 @@ class DomainImageManager implements ImageManager {
 
     @Override
     Map<String, ImageSize> store(File image) {
+        filesManager.fileNames.each {
+            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+        }
         manager.store(image)
     }
 
@@ -76,7 +79,7 @@ class DomainImageManager implements ImageManager {
     @Override
     void delete() {
         filesManager.fileNames.each {
-            ImageDomain.findByFile(filesManager.getDomain(it))?.delete()
+            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
         }
         manager.delete()
     }
