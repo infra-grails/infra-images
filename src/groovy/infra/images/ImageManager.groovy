@@ -1,6 +1,8 @@
 package infra.images
 
+import infra.file.storage.FilesManager
 import infra.images.format.ImageFormat
+import infra.images.util.ImageFormatsBundle
 import infra.images.util.ImageSize
 
 /**
@@ -23,4 +25,10 @@ interface ImageManager {
     ImageSize getSize(String formatName)
 
     ImageSize getSize(ImageFormat format)
+
+    void onStoreFile(Closure callback)
+
+    FilesManager getFilesManager()
+
+    ImageFormatsBundle getFormatsBundle()
 }

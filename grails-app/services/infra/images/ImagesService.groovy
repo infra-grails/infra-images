@@ -12,6 +12,6 @@ class ImagesService {
     AnnotatedImageManagerProvider annotatedImageManagerProvider
 
     ImageManager getImageManager(final holder, boolean imageDomains = false) {
-        annotatedImageManagerProvider.getManager(holder)
+        annotatedImageManagerProvider.getManager(holder, imageDomains)
     }
 }

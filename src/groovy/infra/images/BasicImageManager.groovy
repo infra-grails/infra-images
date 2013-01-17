@@ -1,6 +1,7 @@
 package infra.images
 
 import infra.file.storage.FilesManager
+import infra.file.storage.LocalFileStorage
 import infra.images.format.CustomFormat
 import infra.images.format.ImageFormat
 import infra.images.formatter.ImageFormatter
@@ -22,11 +23,22 @@ class BasicImageManager implements ImageManager {
     private final ImageFormatsBundle imageBundle
     private final ImageFormatter imageFormatter
     private ImageBox originalImage
+    private List<Closure> onStoreFileCallbacks = []
 
     BasicImageManager(FilesManager filesManager, ImageFormatsBundle imageBundle, ImageFormatter imageFormatter) {
         this.filesManager = filesManager
         this.imageBundle = imageBundle
         this.imageFormatter = imageFormatter
+    }
+
+    @Override
+    ImageFormatsBundle getFormatsBundle() {
+        imageBundle
+    }
+
+    @Override
+    FilesManager getFilesManager() {
+        filesManager
     }
 
     @Override
@@ -38,10 +50,17 @@ class BasicImageManager implements ImageManager {
         // TODO: use GPars
         for(ImageFormat format in imageBundle.formats.values()) {
             ImageBox box = imageFormatter.format(format, originalImage)
-            fileSizes.put(filesManager.store(box.file, format.filename), box.size)
+            fileSizes.put(storeFile(box,format), box.size)
         }
 
         fileSizes
+    }
+
+    private String storeFile(ImageBox image, ImageFormat format) {
+        filesManager.store(image.file, format.filename)
+        for(Closure c in onStoreFileCallbacks) {
+            c.call(image, format)
+        }
     }
 
     private void loadOriginal() {
@@ -65,8 +84,7 @@ class BasicImageManager implements ImageManager {
             if (!filesManager.exists(format.filename)) {
                 loadOriginal()
                 ImageBox box = imageFormatter.format(format, originalImage)
-                // TODO: leave callback for cache
-                filesManager.store(box.file, format.filename)
+                storeFile(box, format)
             }
         }
         filesManager.getUrl(format.filename)
@@ -93,7 +111,18 @@ class BasicImageManager implements ImageManager {
 
     @Override
     ImageSize getSize(ImageFormat format) {
+        if (filesManager.storage instanceof LocalFileStorage) {
+            final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
+            if (bimg) {
+                return ImageSize.buildReal(bimg.width, bimg.height, format.density)
+            }
+        }
         getSizeBySrc(getSrc(format), format.density)
+    }
+
+    @Override
+    void onStoreFile(Closure callback) {
+        onStoreFileCallbacks.add(callback)
     }
 
     protected ImageFormat getFormat(String formatName) {
@@ -103,7 +132,7 @@ class BasicImageManager implements ImageManager {
         imageBundle.formats.get(formatName)
     }
 
-    private ImageSize getSizeBySrc(String src, float density) {
+    private static ImageSize getSizeBySrc(String src, float density) {
         URL url = new URL(src)
         final BufferedImage bimg = ImageIO.read(url);
         if (bimg) {
