@@ -112,9 +112,11 @@ class BasicImageManager implements ImageManager {
     @Override
     ImageSize getSize(ImageFormat format) {
         if (filesManager.storage instanceof LocalFileStorage) {
-            final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
-            if (bimg) {
-                return ImageSize.buildReal(bimg.width, bimg.height, format.density)
+            if (filesManager.exists(format.filename)) {
+                final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
+                if (bimg) {
+                    return ImageSize.buildReal(bimg.width, bimg.height, format.density)
+                }
             }
         }
         getSizeBySrc(getSrc(format), format.density)
