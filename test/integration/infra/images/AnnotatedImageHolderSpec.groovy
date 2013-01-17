@@ -1,6 +1,7 @@
 package infra.images
 
 import grails.plugin.spock.IntegrationSpec
+import infra.images.util.ImageSize
 import org.springframework.core.io.ClassPathResource
 import infra.file.storage.FilesHolder
 import infra.images.annotations.BaseFormat
@@ -45,22 +46,17 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         imageFile = new ClassPathResource("test.png", this.class).getFile();
     }
 
-    def cleanupSpec() {
+    def cleanup() {
         new File("web-app/f").deleteDir()
     }
 
-    def "we can build a holder"() {
-        given:
-        holder = new Holder()
-        imageManager = imagesService.getImageManager(holder)
-
-        expect:
-        holder != null
-        imageManager != null
-    }
-
-    def "we can upload an image"() {
+    def "we can upload an image"(boolean withDomains, Class managerClass) {
         given: "we know the stored files paths"
+
+        holder = new Holder()
+        imagesService.annotatedImageManagerProvider.clear()
+        imageManager = imagesService.getImageManager(holder, withDomains)
+
         String localRoot = "web-app/f/storage/pth/im/"
         String webRoot = "/f/storage/pth/im/"
 
@@ -70,9 +66,13 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
 
         File custom
 
-        ImageFormat customFormat = new CustomFormat(125, 125, 1f)
+        ImageFormat customFormat = new CustomFormat(192, 0, 1.5f)
+
+        println withDomains
 
         expect: "at first files does not exists"
+        imageManager.class == managerClass
+
         !original.exists()
         !crop.exists()
         !fit.exists()
@@ -87,9 +87,9 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         fit.exists()
 
         // with correct sizes...
-        assertImageSize(original, 1920, 1200)
-        assertImageSize(crop, 200, 200)
-        assertImageSize(fit, 192, 120)
+        assertImageSize(original, 1920, 1200, imageManager.getSize())
+        assertImageSize(crop, 200, 200, imageManager.getSize("crop"))
+        assertImageSize(fit, 192, 120, imageManager.getSize("fit"))
 
         // and correct urls
         imageManager.getSrc() == webRoot.concat(original.name)
@@ -110,6 +110,7 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         custom.exists()
         customSrc == webRoot.concat(custom.name)
         imageManager.getSrc(customFormat) == customSrc
+        assertImageSize(custom, 288, 180, imageManager.getSize(customFormat))
 
         when: "we delete the holder"
         imageManager.delete()
@@ -119,11 +120,18 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         !crop.exists()
         !fit.exists()
         !custom.exists()
+
+        where:
+        withDomains | managerClass
+        true | DomainImageManager
+        false | BasicImageManager
     }
 
-    private void assertImageSize(File image, int width, int height) {
+    private void assertImageSize(File image, int width, int height, ImageSize size) {
         final BufferedImage bimg = ImageIO.read(image);
         assert bimg.width == width
         assert bimg.height == height
+        assert size.realWidth == width
+        assert size.realHeight == height
     }
 }

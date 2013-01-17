@@ -27,15 +27,19 @@ class AnnotatedImageManagerProvider {
     @Autowired
     ImageFormatter imageFormatter
 
-    Provider getProvider(Class aClass) {
+    Provider getProvider(Class aClass, boolean withImageDomains=false) {
         if (!providers.containsKey(aClass)) {
-            providers.put(aClass, new Provider(aClass))
+            providers.put(aClass, new Provider(aClass, withImageDomains))
         }
         providers.get(aClass)
     }
 
-    ImageManager getManager(def domain) {
-        getProvider(domain.class).getManager(domain)
+    ImageManager getManager(def domain, boolean withImageDomains=false) {
+        getProvider(domain.class, withImageDomains).getManager(domain)
+    }
+
+    void clear() {
+        providers = [:]
     }
 
     private class Provider {
@@ -43,9 +47,11 @@ class AnnotatedImageManagerProvider {
         private final Class domainClass
         private final FilesHolder filesHolder
 
-        private boolean storeDomains = true
+        private boolean storeDomains
 
-        Provider(Class aClass) {
+        Provider(Class aClass, boolean withImageDomains) {
+            storeDomains = withImageDomains
+
             domainClass = aClass
             ImageHolder holder = domainClass.getAnnotation(ImageHolder)
 
@@ -63,26 +69,12 @@ class AnnotatedImageManagerProvider {
         }
 
         ImageManager getManager(def domain) {
-            new Manager(domain, imageFormatter)
+            ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, imageFormatter)
+            (storeDomains ?  new DomainImageManager(m) : m)
         }
 
         private FilesManager getFilesManager(def domain) {
             fileStorageService.getManager(domain, storeDomains, filesHolder as FilesHolder)
-        }
-
-        private class Manager implements ImageManager {
-            private def domain
-            @Delegate
-            private final ImageManager manager
-            private final ImageFormatter formatter
-
-            Manager(def domain, ImageFormatter imageFormatter) {
-                this.domain = domain
-                formatter = imageFormatter
-                ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, formatter)
-                if(storeDomains) m = new DomainImageManager(m)
-                manager = m
-            }
         }
     }
 }
