@@ -39,8 +39,9 @@ class DomainImageManager implements ImageManager {
 
     @Override
     ImageSize getSize(ImageFormat format) {
-        ImageDomain imageDomain = ImageDomain.findByFile(filesManager.getDomain(format.filename))
-        imageDomain ? imageDomain.asSize() : manager.getSize(format)
+        if (filesManager.exists(format.filename)) {
+            ImageDomain.findByFile(filesManager.getDomain(format.filename)).asSize()
+        } else return format.size
     }
 
     @Override
