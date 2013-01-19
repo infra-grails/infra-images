@@ -126,12 +126,15 @@ class BasicImageManager implements ImageManager {
     @Override
     ImageSize getSize(ImageFormat format) {
         if (filesManager.storage instanceof LocalFileStorage) {
-            final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
-            if (bimg) {
-                return ImageSize.buildReal(bimg.width, bimg.height, format.density)
+            if (filesManager.exists(format.filename)) {
+                final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
+                if (bimg) {
+                    return ImageSize.buildReal(bimg.width, bimg.height, format.density)
+                }
             }
+            return format.size
         }
-        getSizeBySrc(getSrc(format), format.density)
+        getSizeBySrc(getSrc(format), format.density) ?: format.size
     }
 
     @Override
@@ -147,10 +150,14 @@ class BasicImageManager implements ImageManager {
     }
 
     private static ImageSize getSizeBySrc(String src, float density) {
-        URL url = new URL(src)
-        final BufferedImage bimg = ImageIO.read(url);
-        if (bimg) {
-            return ImageSize.buildReal(bimg.width, bimg.height, density)
+        try {
+            URL url = new URL(src)
+            final BufferedImage bimg = ImageIO.read(url);
+            if (bimg) {
+                return ImageSize.buildReal(bimg.width, bimg.height, density)
+            }
+        } catch(Exception e) {
+            // TODO: do something
         }
         null
     }
