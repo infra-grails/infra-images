@@ -30,7 +30,7 @@ grails.project.dependency.resolution = {
         grailsRepo "http://mvn.quonb.org/repo", "quonb"
     }
     dependencies {
-        compile "net.coobird:thumbnailator:latest.release"
+        compile "net.coobird:thumbnailator:0.4.3"
 
         test("org.spockframework:spock-grails-support:0.7-groovy-2.0") {
             export = false
