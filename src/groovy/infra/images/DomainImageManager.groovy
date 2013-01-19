@@ -5,6 +5,7 @@ import infra.file.storage.FileDomain
 import infra.images.format.ImageFormat
 import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
+import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
 
 /**
@@ -46,6 +47,24 @@ class DomainImageManager implements ImageManager {
     @Override
     DomainFilesManager getFilesManager() {
         (DomainFilesManager)manager.filesManager
+    }
+
+    @Override
+    ImageInfo getInfo() {
+        getInfo(formatsBundle.original)
+    }
+
+    @Override
+    ImageInfo getInfo(String formatName) {
+        if (!formatsBundle.formats.containsKey(formatName)) {
+            throw new IllegalArgumentException()
+        }
+        getInfo(formatsBundle.formats.get(formatName))
+    }
+
+    @Override
+    ImageInfo getInfo(ImageFormat format) {
+        new ImageInfo(format, getSize(format), getSrc(format))
     }
 
     //

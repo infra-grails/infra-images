@@ -7,6 +7,7 @@ import infra.images.format.ImageFormat
 import infra.images.formatter.ImageFormatter
 import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
+import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
 
 import javax.imageio.ImageIO
@@ -34,6 +35,21 @@ class BasicImageManager implements ImageManager {
     @Override
     ImageFormatsBundle getFormatsBundle() {
         imageBundle
+    }
+
+    @Override
+    ImageInfo getInfo() {
+        getInfo(imageBundle.original)
+    }
+
+    @Override
+    ImageInfo getInfo(String formatName) {
+        getInfo(getFormat(formatName))
+    }
+
+    @Override
+    ImageInfo getInfo(ImageFormat format) {
+        new ImageInfo(format, getSize(format), getSrc(format))
     }
 
     @Override
