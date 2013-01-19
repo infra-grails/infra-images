@@ -1,7 +1,5 @@
 package infra.images
 
-import infra.images.AnnotatedImageManagerProvider
-import infra.images.ImageManager
 import org.springframework.beans.factory.annotation.Autowired
 
 class ImagesService {

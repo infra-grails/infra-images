@@ -12,8 +12,6 @@ import infra.images.util.ImageSize
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.nio.channels.Channels
-import java.nio.channels.ReadableByteChannel
 
 /**
  * @author alari
@@ -58,15 +56,15 @@ class BasicImageManager implements ImageManager {
     }
 
     @Override
-    Map<String,ImageSize> store(File image) {
+    Map<String, ImageSize> store(File image) {
         delete()
         originalImage = new ImageBox(image)
-        Map<String,ImageSize> fileSizes = [:]
+        Map<String, ImageSize> fileSizes = [:]
 
         // TODO: use GPars
-        for(ImageFormat format in imageBundle.formats.values()) {
+        for (ImageFormat format in imageBundle.formats.values()) {
             ImageBox box = imageFormatter.format(format, originalImage)
-            fileSizes.put(storeFile(box,format), box.size)
+            fileSizes.put(storeFile(box, format), box.size)
         }
 
         fileSizes
@@ -74,7 +72,7 @@ class BasicImageManager implements ImageManager {
 
     private String storeFile(ImageBox image, ImageFormat format) {
         filesManager.store(image.file, format.filename)
-        for(Closure c in onStoreFileCallbacks) {
+        for (Closure c in onStoreFileCallbacks) {
             c.call(image, format)
         }
     }
@@ -95,7 +93,7 @@ class BasicImageManager implements ImageManager {
 
     @Override
     String getSrc(ImageFormat format) {
-        if(format instanceof CustomFormat) {
+        if (format instanceof CustomFormat) {
             format.setBaseFormat(imageBundle.basesFormat)
             if (!filesManager.exists(format.filename)) {
                 loadOriginal()

@@ -24,9 +24,9 @@ public class ImageBox {
     }
 
     public BufferedImage getBuffered() throws IOException {
-        if(buffered == null) {
+        if (buffered == null) {
             synchronized (this) {
-                if(buffered == null) {
+                if (buffered == null) {
                     buffered = ImageIO.read(file);
                 }
             }

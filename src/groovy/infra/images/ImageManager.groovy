@@ -11,7 +11,7 @@ import infra.images.util.ImageSize
  * @since 12/23/12 4:00 PM
  */
 interface ImageManager {
-    Map<String,ImageSize> store(File image)
+    Map<String, ImageSize> store(File image)
 
     String getSrc()
 

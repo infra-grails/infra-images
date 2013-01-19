@@ -20,7 +20,7 @@ class DomainImageManager implements ImageManager {
             throw new IllegalArgumentException("To use DomainImageManager you have to use DomainFilesManager; but instance of ${manager.class.name} given")
         }
         this.manager = manager
-        this.manager.onStoreFile {ImageBox image, ImageFormat format->
+        this.manager.onStoreFile { ImageBox image, ImageFormat format ->
             FileDomain fileDomain = filesManager.getDomain(format.filename)
 
             assert fileDomain
@@ -46,7 +46,7 @@ class DomainImageManager implements ImageManager {
 
     @Override
     DomainFilesManager getFilesManager() {
-        (DomainFilesManager)manager.filesManager
+        (DomainFilesManager) manager.filesManager
     }
 
     @Override
