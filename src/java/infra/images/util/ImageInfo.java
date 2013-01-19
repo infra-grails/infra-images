@@ -40,6 +40,10 @@ public class ImageInfo {
     }
 
     public String getImg(Map<String, String> attributes) {
+        if(src == null || src.isEmpty()) {
+            return "";
+        }
+
         StringBuilder builder = new StringBuilder();
         builder.append("<img src=\"").append(src).append('"');
 
@@ -63,5 +67,9 @@ public class ImageInfo {
 
     public String getImg() {
         return getImg(null);
+    }
+
+    public String toString() {
+        return getImg();
     }
 }

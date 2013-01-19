@@ -70,7 +70,7 @@ class DomainImageManager implements ImageManager {
 
     @Override
     ImageInfo getInfo(ImageFormat format) {
-        new ImageInfo(format, getSize(format), getSrc(format))
+        new ImageInfo(format, getSize(format), filesManager.getDomain(format.filename) ? getSrc(format) : "")
     }
 
     @Override
