@@ -67,15 +67,35 @@ class DomainImageManager implements ImageManager {
         new ImageInfo(format, getSize(format), getSrc(format))
     }
 
+    @Override
+    Map<String, ImageSize> store(File image) {
+        filesManager.fileNames.each {
+            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+        }
+        manager.store(image)
+    }
+
+    @Override
+    void delete() {
+        filesManager.fileNames.each {
+            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+        }
+        manager.delete()
+    }
+
+    @Override
+    ImageSize getSize(String formatName) {
+        if (!formatsBundle.formats.containsKey(formatName)) {
+            throw new IllegalArgumentException()
+        }
+        getSize(formatsBundle.formats.get(formatName))
+    }
     //
     //      DELEGATING
     //
 
 
-    @Override
-    Map<String, ImageSize> store(File image) {
-        manager.store(image)
-    }
+
 
     @Override
     String getSrc() {
@@ -92,25 +112,10 @@ class DomainImageManager implements ImageManager {
         manager.getSrc(format)
     }
 
-    @Override
-    void delete() {
-        filesManager.fileNames.each {
-            ImageDomain.findByFile(filesManager.getDomain(it))?.delete()
-        }
-        manager.delete()
-    }
 
     @Override
     ImageSize getSize() {
         getSize(formatsBundle.original)
-    }
-
-    @Override
-    ImageSize getSize(String formatName) {
-        if (!formatsBundle.formats.containsKey(formatName)) {
-            throw new IllegalArgumentException()
-        }
-        getSize(formatsBundle.formats.get(formatName))
     }
 
     @Override
