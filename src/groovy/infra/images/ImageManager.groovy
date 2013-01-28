@@ -5,6 +5,7 @@ import infra.images.format.ImageFormat
 import infra.images.util.ImageFormatsBundle
 import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
+import org.springframework.web.multipart.MultipartFile
 
 /**
  * @author alari
@@ -12,6 +13,8 @@ import infra.images.util.ImageSize
  */
 interface ImageManager {
     Map<String, ImageSize> store(File image)
+
+    Map<String, ImageSize> store(MultipartFile image)
 
     String getSrc()
 

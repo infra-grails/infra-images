@@ -9,6 +9,7 @@ import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
 import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
+import org.springframework.web.multipart.MultipartFile
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -68,6 +69,17 @@ class BasicImageManager implements ImageManager {
         }
 
         fileSizes
+    }
+
+    @Override
+    Map<String, ImageSize> store(MultipartFile image) {
+        if (!image || !image.size) {
+            return null
+        }
+        File imageFile = File.createTempFile("infra-image", "store")
+        imageFile.deleteOnExit()
+        image.transferTo(imageFile)
+        store(image)
     }
 
     private String storeFile(ImageBox image, ImageFormat format) {

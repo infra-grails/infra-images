@@ -7,6 +7,7 @@ import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
 import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
+import org.springframework.web.multipart.MultipartFile
 
 /**
  * @author alari
@@ -75,6 +76,14 @@ class DomainImageManager implements ImageManager {
 
     @Override
     Map<String, ImageSize> store(File image) {
+        filesManager.fileNames.each {
+            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+        }
+        manager.store(image)
+    }
+
+    @Override
+    Map<String, ImageSize> store(MultipartFile image) {
         filesManager.fileNames.each {
             ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
         }
