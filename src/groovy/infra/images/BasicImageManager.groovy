@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import java.util.logging.Logger
 
 /**
  * @author alari
@@ -24,6 +25,8 @@ class BasicImageManager implements ImageManager {
     private final ImageFormatter imageFormatter
     private ImageBox originalImage
     private List<Closure> onStoreFileCallbacks = []
+
+    private static final Logger log = Logger.getLogger(this.canonicalName)
 
     BasicImageManager(FilesManager filesManager, ImageFormatsBundle imageBundle, ImageFormatter imageFormatter) {
         this.filesManager = filesManager
@@ -142,7 +145,7 @@ class BasicImageManager implements ImageManager {
                 final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
                 if (bimg) {
                     return ImageSize.buildReal(bimg.width, bimg.height, format.density)
-                }
+                } else return format.size
             }
             return format.size
         }
@@ -168,9 +171,10 @@ class BasicImageManager implements ImageManager {
             if (bimg) {
                 return ImageSize.buildReal(bimg.width, bimg.height, density)
             }
-        } catch(Exception e) {
-            // TODO: do something
+
+        } catch (Exception e) {
+            log.info "Image file not found: ${src}"
         }
-        null
+        ImageSize.buildReal(0, 0)
     }
 }

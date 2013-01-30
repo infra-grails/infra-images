@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile
  */
 class DomainImageManager implements ImageManager {
     private final ImageManager manager
+    private final Map<String, ImageDomain> imageDomainMap = [:]
 
     DomainImageManager(ImageManager manager) {
         if (!manager.filesManager instanceof DomainFilesManager) {
@@ -29,6 +30,7 @@ class DomainImageManager implements ImageManager {
             ImageDomain imageDomain = ImageDomain.findOrSaveByFile(fileDomain)
             imageDomain.forSize(image.size)
             imageDomain.save(failOnError: true)
+            imageDomainMap.put(format.filename, imageDomain)
 
             assert imageDomain.id
         }
@@ -51,6 +53,17 @@ class DomainImageManager implements ImageManager {
         return manager.getSize(format)
     }
 
+    ImageDomain getDomain(String filename) {
+        if (!imageDomainMap.containsKey(filename)) {
+            if (filesManager.exists(filename)) {
+                imageDomainMap.put(filename, ImageDomain.findByFile(filesManager.getDomain(filename)))
+            } else {
+                imageDomainMap.put filename, null
+            }
+        }
+        imageDomainMap.get(filename)
+    }
+
     @Override
     DomainFilesManager getFilesManager() {
         (DomainFilesManager) manager.filesManager
@@ -59,6 +72,14 @@ class DomainImageManager implements ImageManager {
     @Override
     ImageInfo getInfo() {
         getInfo(formatsBundle.original)
+    }
+
+    Map<String, ImageSize> store(File image) {
+        filesManager.fileNames.each {
+            getDomain(it)?.delete(flush: true)
+            imageDomainMap.remove(it)
+        }
+        manager.store(image)
     }
 
     @Override
@@ -75,17 +96,10 @@ class DomainImageManager implements ImageManager {
     }
 
     @Override
-    Map<String, ImageSize> store(File image) {
-        filesManager.fileNames.each {
-            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
-        }
-        manager.store(image)
-    }
-
-    @Override
     Map<String, ImageSize> store(MultipartFile image) {
         filesManager.fileNames.each {
-            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+            getDomain(it)?.delete(flush: true)
+            imageDomainMap.remove(it)
         }
         manager.store(image)
     }
@@ -108,8 +122,6 @@ class DomainImageManager implements ImageManager {
     //
     //      DELEGATING
     //
-
-
 
 
     @Override
