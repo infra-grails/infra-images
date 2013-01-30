@@ -5,7 +5,9 @@ import infra.file.storage.FileDomain
 import infra.images.format.ImageFormat
 import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
+import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
+import org.springframework.web.multipart.MultipartFile
 
 /**
  * @author alari
@@ -41,8 +43,14 @@ class DomainImageManager implements ImageManager {
 
     @Override
     ImageSize getSize(ImageFormat format) {
-        ImageDomain imageDomain = getDomain(format.filename)
-        imageDomain ? imageDomain.asSize() : format.size
+        FileDomain fileDomain = filesManager.getDomain(format.filename)
+        if (fileDomain) {
+            ImageDomain imageDomain = ImageDomain.findByFile(fileDomain)
+            if (imageDomain) {
+                return imageDomain.asSize()
+            }
+        }
+        return manager.getSize(format)
     }
 
     ImageDomain getDomain(String filename) {
@@ -61,12 +69,11 @@ class DomainImageManager implements ImageManager {
         (DomainFilesManager) manager.filesManager
     }
 
-    //
-    //      DELEGATING
-    //
-
-
     @Override
+    ImageInfo getInfo() {
+        getInfo(formatsBundle.original)
+    }
+
     Map<String, ImageSize> store(File image) {
         filesManager.fileNames.each {
             getDomain(it)?.delete(flush: true)
@@ -74,6 +81,48 @@ class DomainImageManager implements ImageManager {
         }
         manager.store(image)
     }
+
+    @Override
+    ImageInfo getInfo(String formatName) {
+        if (!formatsBundle.formats.containsKey(formatName)) {
+            throw new IllegalArgumentException()
+        }
+        getInfo(formatsBundle.formats.get(formatName))
+    }
+
+    @Override
+    ImageInfo getInfo(ImageFormat format) {
+        new ImageInfo(format, getSize(format), filesManager.getDomain(format.filename) ? getSrc(format) : "")
+    }
+
+    @Override
+    Map<String, ImageSize> store(MultipartFile image) {
+        filesManager.fileNames.each {
+            getDomain(it)?.delete(flush: true)
+            imageDomainMap.remove(it)
+        }
+        manager.store(image)
+    }
+
+    @Override
+    void delete() {
+        filesManager.fileNames.each {
+            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+        }
+        manager.delete()
+    }
+
+    @Override
+    ImageSize getSize(String formatName) {
+        if (!formatsBundle.formats.containsKey(formatName)) {
+            throw new IllegalArgumentException()
+        }
+        getSize(formatsBundle.formats.get(formatName))
+    }
+    //
+    //      DELEGATING
+    //
+
 
     @Override
     String getSrc() {
@@ -90,26 +139,10 @@ class DomainImageManager implements ImageManager {
         manager.getSrc(format)
     }
 
-    @Override
-    void delete() {
-        filesManager.fileNames.each {
-            getDomain(it)?.delete(flush: true)
-            imageDomainMap.remove(it)
-        }
-        manager.delete()
-    }
 
     @Override
     ImageSize getSize() {
         getSize(formatsBundle.original)
-    }
-
-    @Override
-    ImageSize getSize(String formatName) {
-        if (!formatsBundle.formats.containsKey(formatName)) {
-            throw new IllegalArgumentException()
-        }
-        getSize(formatsBundle.formats.get(formatName))
     }
 
     @Override

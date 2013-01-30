@@ -1,7 +1,5 @@
 package infra.images
 
-import infra.images.AnnotatedImageManagerProvider
-import infra.images.ImageManager
 import org.springframework.beans.factory.annotation.Autowired
 
 class ImagesService {
@@ -11,7 +9,7 @@ class ImagesService {
     @Autowired
     AnnotatedImageManagerProvider annotatedImageManagerProvider
 
-    ImageManager getImageManager(final holder, boolean imageDomains = false) {
+    ImageManager getImageManager(final holder, boolean imageDomains = true) {
         annotatedImageManagerProvider.getManager(holder, imageDomains)
     }
 }

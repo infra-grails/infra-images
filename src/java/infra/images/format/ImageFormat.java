@@ -93,6 +93,7 @@ abstract public class ImageFormat {
 
     /**
      * Returns filename to store image of this format in
+     *
      * @return
      */
     public String getFilename() {

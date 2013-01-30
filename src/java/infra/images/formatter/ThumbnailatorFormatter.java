@@ -1,13 +1,12 @@
 package infra.images.formatter;
 
-import infra.images.util.ImageSize;
+import infra.images.format.ImageFormat;
+import infra.images.util.ImageBox;
+import infra.images.util.ImageCropPolicy;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Position;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.stereotype.Component;
-import infra.images.format.ImageFormat;
-import infra.images.util.ImageBox;
-import infra.images.util.ImageCropPolicy;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -26,10 +25,10 @@ public class ThumbnailatorFormatter extends ImageFormatter {
                 .outputFormat(format.getType().toString());
 
         int h = format.getSize().getRealHeight();
-        if(h<=0) h = original.getSize().getRealHeight();
+        if (h <= 0) h = original.getSize().getRealHeight();
 
         int w = format.getSize().getRealWidth();
-        if(w<=0) w = original.getSize().getRealWidth();
+        if (w <= 0) w = original.getSize().getRealWidth();
 
         builder.size(w, h);
 

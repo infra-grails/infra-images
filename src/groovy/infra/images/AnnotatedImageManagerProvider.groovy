@@ -1,5 +1,6 @@
 package infra.images
 
+import infra.file.storage.FileStorageService
 import infra.file.storage.FilesHolder
 import infra.file.storage.FilesManager
 import infra.images.annotations.Format
@@ -12,7 +13,6 @@ import infra.images.formatter.ImageFormatter
 import infra.images.util.ImageFormatsBundle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import infra.file.storage.FileStorageService
 
 /**
  * @author alari
@@ -20,21 +20,21 @@ import infra.file.storage.FileStorageService
  */
 @Component
 class AnnotatedImageManagerProvider {
-    private volatile Map<Class,Provider> providers = [:]
+    private volatile Map<Class, Provider> providers = [:]
 
     @Autowired
     FileStorageService fileStorageService
     @Autowired
     ImageFormatter imageFormatter
 
-    Provider getProvider(Class aClass, boolean withImageDomains=false) {
+    Provider getProvider(Class aClass, boolean withImageDomains = false) {
         if (!providers.containsKey(aClass)) {
             providers.put(aClass, new Provider(aClass, withImageDomains))
         }
         providers.get(aClass)
     }
 
-    ImageManager getManager(def domain, boolean withImageDomains=false) {
+    ImageManager getManager(def domain, boolean withImageDomains = false) {
         getProvider(domain.class, withImageDomains).getManager(domain)
     }
 
@@ -70,7 +70,7 @@ class AnnotatedImageManagerProvider {
 
         ImageManager getManager(def domain) {
             ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, imageFormatter)
-            (storeDomains ?  new DomainImageManager(m) : m)
+            (storeDomains ? new DomainImageManager(m) : m)
         }
 
         private FilesManager getFilesManager(def domain) {

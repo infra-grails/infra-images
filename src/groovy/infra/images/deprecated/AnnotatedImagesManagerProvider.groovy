@@ -1,6 +1,5 @@
 package infra.images.deprecated
 
-import infra.images.util.ImageFormatsBundle
 import infra.file.storage.FileStorageService
 import infra.images.annotations.BaseFormat
 import infra.images.annotations.Format

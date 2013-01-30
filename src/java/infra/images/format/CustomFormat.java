@@ -40,7 +40,7 @@ public class CustomFormat extends ImageFormat {
         type = findActualType(type, baseFormat);
         quality = findActualQuality(quality, baseFormat);
         float density = findActualDensity(0f, baseFormat);
-        if(size.getDensity() != density) {
+        if (size.getDensity() != density) {
             size = ImageSize.buildReal(size.getRealWidth(), size.getRealHeight(), density);
         }
     }

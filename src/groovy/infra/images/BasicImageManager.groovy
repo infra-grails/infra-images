@@ -7,7 +7,9 @@ import infra.images.format.ImageFormat
 import infra.images.formatter.ImageFormatter
 import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
+import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
+import org.springframework.web.multipart.MultipartFile
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -38,6 +40,21 @@ class BasicImageManager implements ImageManager {
     }
 
     @Override
+    ImageInfo getInfo() {
+        getInfo(imageBundle.original)
+    }
+
+    @Override
+    ImageInfo getInfo(String formatName) {
+        getInfo(getFormat(formatName))
+    }
+
+    @Override
+    ImageInfo getInfo(ImageFormat format) {
+        new ImageInfo(format, getSize(format), getSrc(format))
+    }
+
+    @Override
     FilesManager getFilesManager() {
         filesManager
     }
@@ -55,6 +72,17 @@ class BasicImageManager implements ImageManager {
         }
 
         fileSizes
+    }
+
+    @Override
+    Map<String, ImageSize> store(MultipartFile image) {
+        if (!image || !image.size) {
+            return null
+        }
+        File imageFile = File.createTempFile("infra-image", "store")
+        imageFile.deleteOnExit()
+        image.transferTo(imageFile)
+        store(imageFile)
     }
 
     private String storeFile(ImageBox image, ImageFormat format) {
@@ -119,8 +147,9 @@ class BasicImageManager implements ImageManager {
                     return ImageSize.buildReal(bimg.width, bimg.height, format.density)
                 } else return format.size
             }
+            return format.size
         }
-        getSizeBySrc(getSrc(format), format.density)
+        getSizeBySrc(getSrc(format), format.density) ?: format.size
     }
 
     @Override
@@ -142,6 +171,7 @@ class BasicImageManager implements ImageManager {
             if (bimg) {
                 return ImageSize.buildReal(bimg.width, bimg.height, density)
             }
+
         } catch (Exception e) {
             log.info "Image file not found: ${src}"
         }

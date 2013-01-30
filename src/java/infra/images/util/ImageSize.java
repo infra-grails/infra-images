@@ -21,7 +21,7 @@ public class ImageSize {
     }
 
     static public ImageSize buildFormat(int width, int height, float density) {
-        return new ImageSize((int)Math.ceil(width*density), (int)Math.ceil(height*density), density);
+        return new ImageSize((int) Math.ceil(width * density), (int) Math.ceil(height * density), density);
     }
 
     public ImageSize(int realWidth, int realHeight, float density) {
