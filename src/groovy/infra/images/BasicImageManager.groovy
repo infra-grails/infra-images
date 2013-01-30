@@ -79,7 +79,7 @@ class BasicImageManager implements ImageManager {
         File imageFile = File.createTempFile("infra-image", "store")
         imageFile.deleteOnExit()
         image.transferTo(imageFile)
-        store(image)
+        store(imageFile)
     }
 
     private String storeFile(ImageBox image, ImageFormat format) {
