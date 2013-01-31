@@ -50,7 +50,7 @@ class DomainImageManager implements ImageManager {
                 return imageDomain.asSize()
             }
         }
-        return manager.getSize(format)
+        return format.size
     }
 
     ImageDomain getDomain(String filename) {
