@@ -1,5 +1,6 @@
 package infra.images
 
+import groovy.transform.CompileStatic
 import infra.file.storage.FilesManager
 import infra.file.storage.LocalFileStorage
 import infra.images.format.CustomFormat
@@ -9,16 +10,17 @@ import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
 import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
+import org.apache.log4j.Logger
 import org.springframework.web.multipart.MultipartFile
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.util.logging.Logger
 
 /**
  * @author alari
  * @since 1/16/13 11:58 AM
  */
+@CompileStatic
 class BasicImageManager implements ImageManager {
     private final FilesManager filesManager
     private final ImageFormatsBundle imageBundle
@@ -26,7 +28,7 @@ class BasicImageManager implements ImageManager {
     private ImageBox originalImage
     private List<Closure> onStoreFileCallbacks = []
 
-    private static final Logger log = Logger.getLogger(this.canonicalName)
+    private static final Logger log = Logger.getLogger(BasicImageManager)
 
     BasicImageManager(FilesManager filesManager, ImageFormatsBundle imageBundle, ImageFormatter imageFormatter) {
         this.filesManager = filesManager

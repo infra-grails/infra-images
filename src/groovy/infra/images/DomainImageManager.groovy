@@ -27,7 +27,7 @@ class DomainImageManager implements ImageManager {
 
             assert fileDomain
 
-            ImageDomain imageDomain = ImageDomain.findOrSaveByFile(fileDomain)
+            ImageDomain imageDomain = (ImageDomain)ImageDomain.findOrSaveByFile(fileDomain)
             imageDomain.forSize(image.size)
             imageDomain.save(failOnError: true)
             imageDomainMap.put(format.filename, imageDomain)
@@ -74,6 +74,7 @@ class DomainImageManager implements ImageManager {
         getInfo(formatsBundle.original)
     }
 
+    @Override
     Map<String, ImageSize> store(File image) {
         filesManager.fileNames.each {
             getDomain(it)?.delete(flush: true)
@@ -97,9 +98,9 @@ class DomainImageManager implements ImageManager {
 
     @Override
     Map<String, ImageSize> store(MultipartFile image) {
-        filesManager.fileNames.each {
-            getDomain(it)?.delete(flush: true)
-            imageDomainMap.remove(it)
+        filesManager.fileNames.each {String filename->
+            getDomain(filename)?.delete(flush: true)
+            imageDomainMap.remove(filename)
         }
         manager.store(image)
     }
@@ -107,7 +108,7 @@ class DomainImageManager implements ImageManager {
     @Override
     void delete() {
         filesManager.fileNames.each {
-            ImageDomain.findByFile(filesManager.getDomain(it))?.delete(flush: true)
+            ImageDomain.findByFile(getFilesManager().getDomain(it))?.delete(flush: true)
         }
         manager.delete()
     }

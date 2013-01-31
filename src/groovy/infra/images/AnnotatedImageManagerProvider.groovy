@@ -1,5 +1,6 @@
 package infra.images
 
+import groovy.transform.CompileStatic
 import infra.file.storage.FileStorageService
 import infra.file.storage.FilesHolder
 import infra.file.storage.FilesManager
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component
  * @since 12/23/12 4:06 PM
  */
 @Component
+@CompileStatic
 class AnnotatedImageManagerProvider {
     private volatile Map<Class, Provider> providers = [:]
 

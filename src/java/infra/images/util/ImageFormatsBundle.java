@@ -23,7 +23,7 @@ public class ImageFormatsBundle {
         this.formats = formats;
     }
 
-    public Map<String, ? extends ImageFormat> getFormats() {
+    public Map<String, ImageFormat> getFormats() {
         return formats;
     }
 
