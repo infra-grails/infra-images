@@ -20,6 +20,8 @@ public @interface ImagesHolder {
     BaseFormat baseFormat() default @BaseFormat;
 
     FilesHolder filesHolder();
+
+    boolean enableImageDomains() default true;
 }
 
 

@@ -29,15 +29,15 @@ class AnnotatedImageManagerProvider {
     @Autowired
     ImageFormatter imageFormatter
 
-    Provider getProvider(Class aClass, boolean withImageDomains = false) {
+    Provider getProvider(Class aClass) {
         if (!providers.containsKey(aClass)) {
-            providers.put(aClass, new Provider(aClass, withImageDomains))
+            providers.put(aClass, new Provider(aClass))
         }
         providers.get(aClass)
     }
 
-    ImageManager getManager(def domain, boolean withImageDomains = false) {
-        getProvider(domain.class, withImageDomains).getManager(domain)
+    ImageManager getManager(def domain) {
+        getProvider(domain.class).getManager(domain)
     }
 
     void clear() {
@@ -51,11 +51,10 @@ class AnnotatedImageManagerProvider {
 
         private boolean storeDomains
 
-        Provider(Class aClass, boolean withImageDomains) {
-            storeDomains = withImageDomains
-
+        Provider(Class aClass) {
             domainClass = aClass
             ImageHolder holder = domainClass.getAnnotation(ImageHolder)
+            storeDomains = holder.enableImageDomains()
 
             filesHolder = holder.filesHolder()
 

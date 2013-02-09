@@ -24,7 +24,6 @@ grails.project.dependency.resolution = {
         grailsCentral()
 
         mavenCentral()
-        mavenLocal()
 
         mavenRepo "http://mvn.quonb.org/repo"
         grailsRepo "http://mvn.quonb.org/repo", "quonb"

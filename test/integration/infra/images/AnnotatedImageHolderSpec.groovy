@@ -1,8 +1,6 @@
 package infra.images
 
 import grails.plugin.spock.IntegrationSpec
-import infra.images.util.ImageSize
-import org.springframework.core.io.ClassPathResource
 import infra.file.storage.FilesHolder
 import infra.images.annotations.BaseFormat
 import infra.images.annotations.Format
@@ -11,7 +9,9 @@ import infra.images.annotations.ImageHolder
 import infra.images.format.CustomFormat
 import infra.images.format.ImageFormat
 import infra.images.util.ImageCropPolicy
+import infra.images.util.ImageSize
 import infra.images.util.ImageType
+import org.springframework.core.io.ClassPathResource
 import spock.lang.Shared
 import spock.lang.Stepwise
 
@@ -22,23 +22,41 @@ import java.awt.image.BufferedImage
 class AnnotatedImageHolderSpec extends IntegrationSpec {
 
     @Shared ImageManager imageManager
-    @Shared Holder holder
     @Shared File imageFile
 
     def imagesService
 
     @ImageHolder(
-    image = @Image(name = "im",
-    baseFormat = @BaseFormat(type = ImageType.PNG),
-    formats = [
-    @Format(name = "crop", crop = ImageCropPolicy.CENTER, width = 100, height = 100, density = 2f),
-    @Format(name = "fit", crop = ImageCropPolicy.NONE, width = 192, height = 192)
-    ]),
-    filesHolder = @FilesHolder(
-    path = { "pth/im" }
+            image = @Image(name = "im",
+                    baseFormat = @BaseFormat(type = ImageType.PNG),
+                    formats = [
+                    @Format(name = "crop", crop = ImageCropPolicy.CENTER, width = 100, height = 100, density = 2f),
+                    @Format(name = "fit", crop = ImageCropPolicy.NONE, width = 192, height = 192)
+                    ]),
+            filesHolder = @FilesHolder(
+                    path = { "pth/im" },
+                    enableFileDomains = false
+            ),
+            enableImageDomains = false
     )
+    private class PlainHolder {
+    }
+
+    @ImageHolder(
+            image = @Image(name = "im",
+                    baseFormat = @BaseFormat(type = ImageType.PNG),
+                    formats = [
+                    @Format(name = "crop", crop = ImageCropPolicy.CENTER, width = 100, height = 100, density = 2f),
+                    @Format(name = "fit", crop = ImageCropPolicy.NONE, width = 192, height = 192)
+                    ]),
+            filesHolder = @FilesHolder(
+                    path = { "pth/im" },
+                    enableFileDomains = true
+            ),
+            enableImageDomains = true
     )
-    private class Holder {
+    private class DomainsHolder {
+
     }
 
     def setupSpec() {
@@ -50,12 +68,12 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         new File("web-app/f").deleteDir()
     }
 
-    def "we can upload an image"(boolean withDomains, Class managerClass) {
+    def "we can upload an image"(Class holderClass, Class managerClass) {
         given: "we know the stored files paths"
 
-        holder = new Holder()
+        def holder = holderClass.newInstance()
         imagesService.annotatedImageManagerProvider.clear()
-        imageManager = imagesService.getImageManager(holder, withDomains)
+        imageManager = imagesService.getImageManager(holder)
 
         String localRoot = "web-app/f/storage/pth/im/"
         String webRoot = "/f/storage/pth/im/"
@@ -67,8 +85,6 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         File custom
 
         ImageFormat customFormat = new CustomFormat(192, 0, 1.5f)
-
-        println withDomains
 
         expect: "at first files does not exists"
         imageManager.class == managerClass
@@ -122,9 +138,9 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
         !custom.exists()
 
         where:
-        withDomains | managerClass
-        true | DomainImageManager
-        false | BasicImageManager
+        holderClass   | managerClass
+        DomainsHolder | DomainImageManager
+        PlainHolder   | BasicImageManager
     }
 
     private void assertImageSize(File image, int width, int height, ImageSize size) {

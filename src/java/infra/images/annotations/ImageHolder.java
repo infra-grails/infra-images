@@ -18,4 +18,6 @@ public @interface ImageHolder {
     Image image();
 
     FilesHolder filesHolder();
+
+    boolean enableImageDomains() default true;
 }
