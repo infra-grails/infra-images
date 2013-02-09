@@ -75,7 +75,7 @@ class AnnotatedImageManagerProvider {
         }
 
         private FilesManager getFilesManager(def domain) {
-            fileStorageService.getManager(domain, storeDomains, filesHolder as FilesHolder)
+            fileStorageService.getManager(domain, filesHolder as FilesHolder)
         }
     }
 }

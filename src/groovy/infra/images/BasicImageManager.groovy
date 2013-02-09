@@ -88,10 +88,11 @@ class BasicImageManager implements ImageManager {
     }
 
     private String storeFile(ImageBox image, ImageFormat format) {
-        filesManager.store(image.file, format.filename)
+        String s = filesManager.store(image.file, format.filename)
         for (Closure c in onStoreFileCallbacks) {
             c.call(image, format)
         }
+        s
     }
 
     private void loadOriginal() {
