@@ -16,6 +16,14 @@ interface ImageManager {
 
     Map<String, ImageSize> store(MultipartFile image)
 
+    void reformat(String formatName)
+
+    void reformat(ImageFormat format)
+
+    void removeFormat(String formatName)
+
+    void removeFormat(ImageFormat format)
+
     String getSrc()
 
     String getSrc(String formatName)

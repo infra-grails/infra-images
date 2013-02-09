@@ -108,7 +108,7 @@ class DomainImageManager implements ImageManager {
     @Override
     void delete() {
         filesManager.fileNames.each {
-            ImageDomain.findByFile(getFilesManager().getDomain(it))?.delete(flush: true)
+           getDomain(it)?.delete(flush: true)
         }
         manager.delete()
     }
@@ -120,10 +120,33 @@ class DomainImageManager implements ImageManager {
         }
         getSize(formatsBundle.formats.get(formatName))
     }
+
+    @Override
+    void removeFormat(String formatName) {
+        if (!formatsBundle.formats.containsKey(formatName)) {
+            throw new IllegalArgumentException()
+        }
+        removeFormat(formatsBundle.formats.get(formatName))
+    }
+
+    @Override
+    void removeFormat(ImageFormat format) {
+        getDomain(format.filename)?.delete(flush: true)
+        manager.removeFormat(format)
+    }
     //
     //      DELEGATING
     //
 
+    @Override
+    void reformat(String formatName) {
+        manager.reformat(formatName)
+    }
+
+    @Override
+    void reformat(ImageFormat format) {
+        manager.reformat(format)
+    }
 
     @Override
     String getSrc() {
