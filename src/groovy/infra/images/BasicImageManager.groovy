@@ -102,9 +102,10 @@ class BasicImageManager implements ImageManager {
     void reformat(ImageFormat format) {
         if (!isStored()) return;
         loadOriginal()
-        ImageBox box = imageFormatter.format(format, originalImage)
-        storeFile(box, format)
-
+        if (originalImage.file?.exists()) {
+            ImageBox box = imageFormatter.format(format, originalImage)
+            storeFile(box, format)
+        }
     }
 
     @Override
