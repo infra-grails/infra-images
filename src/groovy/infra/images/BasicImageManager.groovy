@@ -57,6 +57,11 @@ class BasicImageManager implements ImageManager {
     }
 
     @Override
+    boolean isStored() {
+        filesManager.exists(imageBundle.original.filename)
+    }
+
+    @Override
     FilesManager getFilesManager() {
         filesManager
     }
@@ -89,23 +94,28 @@ class BasicImageManager implements ImageManager {
 
     @Override
     void reformat(String formatName) {
+        if (!isStored()) return;
         reformat(getFormat(formatName));
     }
 
     @Override
     void reformat(ImageFormat format) {
+        if (!isStored()) return;
         loadOriginal()
         ImageBox box = imageFormatter.format(format, originalImage)
         storeFile(box, format)
+
     }
 
     @Override
     void removeFormat(String formatName) {
+        if (!isStored()) return;
         removeFormat(getFormat(formatName))
     }
 
     @Override
     void removeFormat(ImageFormat format) {
+        if (!isStored()) return;
         filesManager.delete(format.filename)
     }
 

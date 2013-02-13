@@ -49,4 +49,6 @@ interface ImageManager {
     ImageInfo getInfo(String formatName)
 
     ImageInfo getInfo(ImageFormat format)
+
+    boolean isStored()
 }

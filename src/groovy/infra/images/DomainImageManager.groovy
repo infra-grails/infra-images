@@ -139,6 +139,11 @@ class DomainImageManager implements ImageManager {
     //
 
     @Override
+    boolean isStored() {
+        manager.isStored()
+    }
+
+    @Override
     void reformat(String formatName) {
         manager.reformat(formatName)
     }
