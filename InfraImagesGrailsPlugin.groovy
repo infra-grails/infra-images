@@ -1,8 +1,10 @@
+import infra.images.domain.ImageDomainRepoProviderImpl
+
 class InfraImagesGrailsPlugin {
     // the plugin version
     def version = "0.2-SNAPSHOT"
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "2.0 > *"
+    def grailsVersion = "2.2 > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
@@ -45,6 +47,7 @@ Image resizer, reformatter, and storage routine. May depend on mirari-infra-file
     def doWithSpring = {
         xmlns context: "http://www.springframework.org/schema/context"
         context.'component-scan'('base-package': "infra.images")
+        imageDomainRepoProvider(ImageDomainRepoProviderImpl)
     }
 
     def doWithDynamicMethods = { ctx ->

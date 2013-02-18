@@ -6,6 +6,7 @@ import infra.images.annotations.BaseFormat
 import infra.images.annotations.Format
 import infra.images.annotations.Image
 import infra.images.annotations.ImageHolder
+import infra.images.domain.DomainImageManager
 import infra.images.format.CustomFormat
 import infra.images.format.ImageFormat
 import infra.images.util.ImageCropPolicy

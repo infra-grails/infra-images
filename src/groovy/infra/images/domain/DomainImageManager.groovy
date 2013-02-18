@@ -1,7 +1,7 @@
-package infra.images
+package infra.images.domain
 
-import infra.file.storage.domain.DomainFilesManager
-import infra.file.storage.FileDomain
+import infra.file.storage.FilesManager
+import infra.images.ImageManager
 import infra.images.format.ImageFormat
 import infra.images.util.ImageBox
 import infra.images.util.ImageFormatsBundle
@@ -15,24 +15,14 @@ import org.springframework.web.multipart.MultipartFile
  */
 class DomainImageManager implements ImageManager {
     private final ImageManager manager
-    private final Map<String, ImageDomain> imageDomainMap = [:]
 
-    DomainImageManager(ImageManager manager) {
-        if (!manager.filesManager instanceof DomainFilesManager) {
-            throw new IllegalArgumentException("To use DomainImageManager you have to use DomainFilesManager; but instance of ${manager.class.name} given")
-        }
+    private final ImageDomainRepo imageDomainRepo
+
+    DomainImageManager(ImageManager manager, ImageDomainRepoProvider imageDomainRepoProvider) {
         this.manager = manager
+        imageDomainRepo = imageDomainRepoProvider.get(this.manager)
         this.manager.onStoreFile { ImageBox image, ImageFormat format ->
-            FileDomain fileDomain = filesManager.getDomain(format.filename)
-
-            assert fileDomain
-
-            ImageDomain imageDomain = (ImageDomain)ImageDomain.findOrSaveByFile(fileDomain)
-            imageDomain.forSize(image.size)
-            imageDomain.save(failOnError: true)
-            imageDomainMap.put(format.filename, imageDomain)
-
-            assert imageDomain.id
+            imageDomainRepo.onStoreFile(image, format)
         }
     }
 
@@ -43,30 +33,7 @@ class DomainImageManager implements ImageManager {
 
     @Override
     ImageSize getSize(ImageFormat format) {
-        FileDomain fileDomain = filesManager.getDomain(format.filename)
-        if (fileDomain) {
-            ImageDomain imageDomain = ImageDomain.findByFile(fileDomain)
-            if (imageDomain) {
-                return imageDomain.asSize()
-            }
-        }
-        return format.size
-    }
-
-    ImageDomain getDomain(String filename) {
-        if (!imageDomainMap.containsKey(filename)) {
-            if (filesManager.exists(filename)) {
-                imageDomainMap.put(filename, ImageDomain.findByFile(filesManager.getDomain(filename)))
-            } else {
-                imageDomainMap.put filename, null
-            }
-        }
-        imageDomainMap.get(filename)
-    }
-
-    @Override
-    DomainFilesManager getFilesManager() {
-        (DomainFilesManager) manager.filesManager
+        imageDomainRepo.getDomain(format)?.asSize() ?: format.size
     }
 
     @Override
@@ -76,10 +43,7 @@ class DomainImageManager implements ImageManager {
 
     @Override
     Map<String, ImageSize> store(File image) {
-        filesManager.fileNames.each {
-            getDomain(it)?.delete(flush: true)
-            imageDomainMap.remove(it)
-        }
+        imageDomainRepo.delete()
         manager.store(image)
     }
 
@@ -93,23 +57,18 @@ class DomainImageManager implements ImageManager {
 
     @Override
     ImageInfo getInfo(ImageFormat format) {
-        new ImageInfo(format, getSize(format), filesManager.getDomain(format.filename) ? getSrc(format) : "")
+        new ImageInfo(format, getSize(format), getSrc(format))
     }
 
     @Override
     Map<String, ImageSize> store(MultipartFile image) {
-        filesManager.fileNames.each {String filename->
-            getDomain(filename)?.delete(flush: true)
-            imageDomainMap.remove(filename)
-        }
+        imageDomainRepo.delete()
         manager.store(image)
     }
 
     @Override
     void delete() {
-        filesManager.fileNames.each {
-           getDomain(it)?.delete(flush: true)
-        }
+        imageDomainRepo.delete()
         manager.delete()
     }
 
@@ -131,7 +90,7 @@ class DomainImageManager implements ImageManager {
 
     @Override
     void removeFormat(ImageFormat format) {
-        getDomain(format.filename)?.delete(flush: true)
+        imageDomainRepo.delete(format)
         manager.removeFormat(format)
     }
     //
@@ -168,7 +127,6 @@ class DomainImageManager implements ImageManager {
         manager.getSrc(format)
     }
 
-
     @Override
     ImageSize getSize() {
         getSize(formatsBundle.original)
@@ -177,5 +135,10 @@ class DomainImageManager implements ImageManager {
     @Override
     ImageFormatsBundle getFormatsBundle() {
         manager.formatsBundle
+    }
+
+    @Override
+    FilesManager getFilesManager() {
+        manager.filesManager
     }
 }

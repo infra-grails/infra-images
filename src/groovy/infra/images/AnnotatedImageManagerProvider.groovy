@@ -7,6 +7,8 @@ import infra.file.storage.FilesManager
 import infra.images.annotations.Format
 import infra.images.annotations.Image
 import infra.images.annotations.ImageHolder
+import infra.images.domain.DomainImageManager
+import infra.images.domain.ImageDomainRepoProvider
 import infra.images.format.AnnotationFormat
 import infra.images.format.BasesFormat
 import infra.images.format.ImageFormat
@@ -28,6 +30,8 @@ class AnnotatedImageManagerProvider {
     FileStorageService fileStorageService
     @Autowired
     ImageFormatter imageFormatter
+    @Autowired
+    ImageDomainRepoProvider imageDomainRepoProvider
 
     Provider getProvider(Class aClass) {
         if (!providers.containsKey(aClass)) {
@@ -71,7 +75,7 @@ class AnnotatedImageManagerProvider {
 
         ImageManager getManager(def domain) {
             ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, imageFormatter)
-            (storeDomains ? new DomainImageManager(m) : m)
+            (storeDomains ? new DomainImageManager(m, imageDomainRepoProvider) : m)
         }
 
         private FilesManager getFilesManager(def domain) {
