@@ -1,6 +1,6 @@
 package infra.images
 
-import infra.file.storage.DomainFilesManager
+import infra.file.storage.domain.DomainFilesManager
 import infra.file.storage.FileDomain
 import infra.images.format.ImageFormat
 import infra.images.util.ImageBox
