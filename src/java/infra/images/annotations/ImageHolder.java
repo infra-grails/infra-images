@@ -20,4 +20,6 @@ public @interface ImageHolder {
     FilesHolder filesHolder();
 
     boolean enableImageDomains() default true;
+
+    String versionProperty() default "";
 }

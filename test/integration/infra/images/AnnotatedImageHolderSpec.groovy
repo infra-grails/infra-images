@@ -67,13 +67,13 @@ class AnnotatedImageHolderSpec extends IntegrationSpec {
 
     def cleanup() {
         new File("web-app/f").deleteDir()
+        imagesService.annotatedImageManagerProvider.clear()
     }
 
     def "we can upload an image"(Class holderClass, Class managerClass) {
         given: "we know the stored files paths"
 
         def holder = holderClass.newInstance()
-        imagesService.annotatedImageManagerProvider.clear()
         imageManager = imagesService.getImageManager(holder)
 
         String localRoot = "web-app/f/storage/pth/im/"

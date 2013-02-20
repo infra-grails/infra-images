@@ -5,6 +5,7 @@ import infra.file.storage.domain.DomainFilesManager
 import infra.images.ImageDomain
 import infra.images.format.ImageFormat
 import infra.images.util.ImageBox
+import infra.images.util.ImageFormatsBundle
 
 /**
  * @author alari
@@ -14,22 +15,24 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
     private final Map<String, ImageDomain> imageDomainMap = [:]
 
     private final DomainFilesManager filesManager
+    private final ImageFormatsBundle formatsBundle
 
-    ImageDomainRepoImpl(DomainFilesManager filesManager) {
+    ImageDomainRepoImpl(DomainFilesManager filesManager, ImageFormatsBundle formatsBundle) {
         this.filesManager = filesManager
+        this.formatsBundle = formatsBundle
     }
 
     @Override
     void onStoreFile(ImageBox image, ImageFormat format) {
 
-        FileDomain fileDomain = getFileDomain(format.filename)
+        FileDomain fileDomain = getFileDomain(formatsBundle.getFormatFilename(format))
 
         assert fileDomain
 
         ImageDomain imageDomain = (ImageDomain)ImageDomain.findOrSaveByFile(fileDomain)
         imageDomain.forSize(image.size)
         imageDomain.save(failOnError: true)
-        imageDomainMap.put(format.filename, imageDomain)
+        imageDomainMap.put(formatsBundle.getFormatFilename(format), imageDomain)
 
         assert imageDomain.id
     }
@@ -37,7 +40,7 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
     @Override
     void delete(ImageFormat format) {
         getDomain(format)?.delete()
-        imageDomainMap.remove(format.filename)
+        imageDomainMap.remove(formatsBundle.getFormatFilename(format))
     }
 
     @Override
@@ -51,15 +54,16 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
 
     @Override
     ImageDomain getDomain(ImageFormat format) {
-        if (!imageDomainMap.containsKey(format.filename)) {
-            FileDomain fileDomain = getFileDomain(format.filename)
+        String filename = formatsBundle.getFormatFilename(format)
+        if (!imageDomainMap.containsKey(filename)) {
+            FileDomain fileDomain = getFileDomain(filename)
             if (fileDomain) {
-                imageDomainMap.put(format.filename, getImageDomain(fileDomain))
+                imageDomainMap.put(filename, getImageDomain(fileDomain))
             } else {
-                imageDomainMap.put format.filename, null
+                imageDomainMap.put filename, null
             }
         }
-        imageDomainMap.get(format.filename)
+        imageDomainMap.get(filename)
     }
 
     private FileDomain getFileDomain(String filename) {

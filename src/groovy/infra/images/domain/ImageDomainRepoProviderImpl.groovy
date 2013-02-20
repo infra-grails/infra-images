@@ -10,6 +10,6 @@ import infra.images.ImageManager
 class ImageDomainRepoProviderImpl implements ImageDomainRepoProvider {
     @Override
     ImageDomainRepo get(ImageManager manager) {
-        new ImageDomainRepoImpl((DomainFilesManager)manager.filesManager)
+        new ImageDomainRepoImpl((DomainFilesManager)manager.filesManager, manager.formatsBundle)
     }
 }

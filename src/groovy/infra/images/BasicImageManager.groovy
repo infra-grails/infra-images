@@ -58,7 +58,7 @@ class BasicImageManager implements ImageManager {
 
     @Override
     boolean isStored() {
-        filesManager.exists(imageBundle.original.filename)
+        filesManager.exists(getFilename(imageBundle.original))
     }
 
     @Override
@@ -68,7 +68,7 @@ class BasicImageManager implements ImageManager {
 
     @Override
     Map<String, ImageSize> store(File image) {
-        delete()
+        if (isStored()) delete()
         originalImage = new ImageBox(image)
         Map<String, ImageSize> fileSizes = [:]
 
@@ -109,6 +109,12 @@ class BasicImageManager implements ImageManager {
     }
 
     @Override
+    void reformat() {
+        loadOriginal()
+        if (originalImage.file?.exists()) store(originalImage.file)
+    }
+
+    @Override
     void removeFormat(String formatName) {
         if (!isStored()) return;
         removeFormat(getFormat(formatName))
@@ -117,11 +123,11 @@ class BasicImageManager implements ImageManager {
     @Override
     void removeFormat(ImageFormat format) {
         if (!isStored()) return;
-        filesManager.delete(format.filename)
+        filesManager.delete(getFilename(format))
     }
 
     private String storeFile(ImageBox image, ImageFormat format) {
-        String s = filesManager.store(image.file, format.filename)
+        String s = filesManager.store(image.file, getFilename(format))
         for (Closure c in onStoreFileCallbacks) {
             c.call(image, format)
         }
@@ -129,7 +135,11 @@ class BasicImageManager implements ImageManager {
     }
 
     private void loadOriginal() {
-        if (!originalImage) originalImage = new ImageBox(filesManager.getFile(imageBundle.original.filename))
+        if (!originalImage) originalImage = new ImageBox(filesManager.getFile(getFilename(imageBundle.original)))
+    }
+
+    private String getFilename(ImageFormat format) {
+        imageBundle.getFormatFilename(format)
     }
 
     @Override
@@ -146,17 +156,17 @@ class BasicImageManager implements ImageManager {
     String getSrc(ImageFormat format) {
         if (format instanceof CustomFormat) {
             format.setBaseFormat(imageBundle.basesFormat)
-            if (!filesManager.exists(format.filename)) {
+            if (!filesManager.exists(getFilename(format))) {
                 loadOriginal()
                 ImageBox box = imageFormatter.format(format, originalImage)
                 storeFile(box, format)
             }
         }
-        filesManager.getUrl(format.filename)
+        filesManager.getUrl(getFilename(format))
     }
 
     private String getExistentFormatSrc(ImageFormat format) {
-        filesManager.getUrl(format.filename)
+        filesManager.getUrl(getFilename(format))
     }
 
     @Override
@@ -177,8 +187,8 @@ class BasicImageManager implements ImageManager {
     @Override
     ImageSize getSize(ImageFormat format) {
         if (filesManager.storage instanceof LocalFileStorage) {
-            if (filesManager.exists(format.filename)) {
-                final BufferedImage bimg = ImageIO.read(filesManager.getFile(format.filename))
+            if (filesManager.exists(getFilename(format))) {
+                final BufferedImage bimg = ImageIO.read(filesManager.getFile(getFilename(format)))
                 if (bimg) {
                     return ImageSize.buildReal(bimg.width, bimg.height, format.density)
                 } else return format.size

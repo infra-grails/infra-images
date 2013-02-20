@@ -1,10 +1,8 @@
 package infra.images.domain
 
-import infra.file.storage.FilesManager
 import infra.images.ImageManager
 import infra.images.format.ImageFormat
 import infra.images.util.ImageBox
-import infra.images.util.ImageFormatsBundle
 import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
 import org.springframework.web.multipart.MultipartFile
@@ -14,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile
  * @since 1/16/13 12:55 PM
  */
 class DomainImageManager implements ImageManager {
-    private final ImageManager manager
+    @Delegate private final ImageManager manager
 
     private final ImageDomainRepo imageDomainRepo
 
@@ -24,11 +22,6 @@ class DomainImageManager implements ImageManager {
         this.manager.onStoreFile { ImageBox image, ImageFormat format ->
             imageDomainRepo.onStoreFile(image, format)
         }
-    }
-
-    @Override
-    void onStoreFile(Closure callback) {
-        manager.onStoreFile callback
     }
 
     @Override
@@ -93,52 +86,5 @@ class DomainImageManager implements ImageManager {
         imageDomainRepo.delete(format)
         manager.removeFormat(format)
     }
-    //
-    //      DELEGATING
-    //
 
-    @Override
-    boolean isStored() {
-        manager.isStored()
-    }
-
-    @Override
-    void reformat(String formatName) {
-        manager.reformat(formatName)
-    }
-
-    @Override
-    void reformat(ImageFormat format) {
-        manager.reformat(format)
-    }
-
-    @Override
-    String getSrc() {
-        manager.getSrc()
-    }
-
-    @Override
-    String getSrc(String formatName) {
-        manager.getSrc(formatName)
-    }
-
-    @Override
-    String getSrc(ImageFormat format) {
-        manager.getSrc(format)
-    }
-
-    @Override
-    ImageSize getSize() {
-        getSize(formatsBundle.original)
-    }
-
-    @Override
-    ImageFormatsBundle getFormatsBundle() {
-        manager.formatsBundle
-    }
-
-    @Override
-    FilesManager getFilesManager() {
-        manager.filesManager
-    }
 }

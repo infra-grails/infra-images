@@ -20,6 +20,8 @@ interface ImageManager {
 
     void reformat(ImageFormat format)
 
+    void reformat()
+
     void removeFormat(String formatName)
 
     void removeFormat(ImageFormat format)

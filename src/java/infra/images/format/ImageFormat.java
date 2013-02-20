@@ -96,7 +96,11 @@ abstract public class ImageFormat {
      *
      * @return
      */
-    public String getFilename() {
+    public final String getFilename() {
         return getName() + "." + getType().toString();
+    }
+
+    public final String getVersionedFilename(int version) {
+        return getName() + ((version>0) ? ("."+version) : "") + "." + getType().toString();
     }
 }

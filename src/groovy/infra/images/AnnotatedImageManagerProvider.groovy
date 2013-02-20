@@ -54,11 +54,13 @@ class AnnotatedImageManagerProvider {
         private final FilesHolder filesHolder
 
         private boolean storeDomains
+        private String versionProperty
 
         Provider(Class aClass) {
             domainClass = aClass
             ImageHolder holder = domainClass.getAnnotation(ImageHolder)
             storeDomains = holder.enableImageDomains()
+            versionProperty = holder.versionProperty() ?: null
 
             filesHolder = holder.filesHolder()
 
@@ -75,7 +77,13 @@ class AnnotatedImageManagerProvider {
 
         ImageManager getManager(def domain) {
             ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, imageFormatter)
-            (storeDomains ? new DomainImageManager(m, imageDomainRepoProvider) : m)
+            if (storeDomains) {
+                m = new DomainImageManager(m, imageDomainRepoProvider)
+            }
+            if(versionProperty) {
+                m = new VersionedImageManager(m, domain, versionProperty)
+            }
+            m
         }
 
         private FilesManager getFilesManager(def domain) {

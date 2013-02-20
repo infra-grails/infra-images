@@ -14,6 +14,7 @@ public class ImageFormatsBundle {
     private final ImageFormat basesFormat;
     private final String name;
     private final ImageFormat original;
+    private Integer version;
 
     public ImageFormatsBundle(String name, Map<String, ImageFormat> formats, ImageFormat basesFormat) {
         this.name = name;
@@ -37,5 +38,17 @@ public class ImageFormatsBundle {
 
     public ImageFormat getOriginal() {
         return original;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public String getFormatFilename(ImageFormat format) {
+        return (version != null && version > 0 ? format.getVersionedFilename(version) : format.getFilename());
     }
 }
