@@ -5,7 +5,6 @@ import infra.images.format.ImageFormat
 import infra.images.util.ImageBox
 import infra.images.util.ImageInfo
 import infra.images.util.ImageSize
-import org.springframework.web.multipart.MultipartFile
 
 /**
  * @author alari
@@ -22,6 +21,9 @@ class DomainImageManager implements ImageManager {
         this.manager.onStoreFile { ImageBox image, ImageFormat format ->
             imageDomainRepo.onStoreFile(image, format)
         }
+        this.manager.onBeforeDelete {ImageFormat format=null ->
+            format ? imageDomainRepo.delete(format) : imageDomainRepo.delete()
+        }
     }
 
     @Override
@@ -32,12 +34,6 @@ class DomainImageManager implements ImageManager {
     @Override
     ImageInfo getInfo() {
         getInfo(formatsBundle.original)
-    }
-
-    @Override
-    Map<String, ImageSize> store(File image) {
-        imageDomainRepo.delete()
-        manager.store(image)
     }
 
     @Override
@@ -54,37 +50,10 @@ class DomainImageManager implements ImageManager {
     }
 
     @Override
-    Map<String, ImageSize> store(MultipartFile image) {
-        imageDomainRepo.delete()
-        manager.store(image)
-    }
-
-    @Override
-    void delete() {
-        imageDomainRepo.delete()
-        manager.delete()
-    }
-
-    @Override
     ImageSize getSize(String formatName) {
         if (!formatsBundle.formats.containsKey(formatName)) {
             throw new IllegalArgumentException()
         }
         getSize(formatsBundle.formats.get(formatName))
     }
-
-    @Override
-    void removeFormat(String formatName) {
-        if (!formatsBundle.formats.containsKey(formatName)) {
-            throw new IllegalArgumentException()
-        }
-        removeFormat(formatsBundle.formats.get(formatName))
-    }
-
-    @Override
-    void removeFormat(ImageFormat format) {
-        imageDomainRepo.delete(format)
-        manager.removeFormat(format)
-    }
-
 }

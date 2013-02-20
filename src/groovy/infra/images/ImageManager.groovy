@@ -42,6 +42,8 @@ interface ImageManager {
 
     void onStoreFile(Closure callback)
 
+    void onBeforeDelete(Closure callback)
+
     FilesManager getFilesManager()
 
     ImageFormatsBundle getFormatsBundle()

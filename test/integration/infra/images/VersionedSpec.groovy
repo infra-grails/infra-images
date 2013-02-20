@@ -27,6 +27,10 @@ class VersionedSpec extends IntegrationSpec {
 
     def imagesService
 
+    @Shared ImageTagLib tagLib
+
+    List tagOut = []
+
     @ImageHolder(
             image = @Image(name = "im",
                     baseFormat = @BaseFormat(type = ImageType.PNG),
@@ -47,6 +51,11 @@ class VersionedSpec extends IntegrationSpec {
     def setupSpec() {
         new File("web-app/f").deleteDir()
         imageFile = new ClassPathResource("test.png", this.class).getFile();
+    }
+
+    def setup() {
+        tagLib = new ImageTagLib()
+        tagLib.imagesService = imagesService
     }
 
     def cleanup() {
@@ -73,6 +82,7 @@ class VersionedSpec extends IntegrationSpec {
         !originalUpdated.exists()
         !fitUpdated.exists()
         holder.version == null
+        tagLib.image(holder: holder, format: "fit", {"empty"}) == "empty"
 
         when: "we store an image"
         imageManager.store(imageFile)
@@ -81,6 +91,8 @@ class VersionedSpec extends IntegrationSpec {
         holder.version == 1
         original.exists()
         fit.exists()
+
+        tagLib.image(holder: holder, format: "fit", {"empty"}) == '<img src="/f/storage/vers/v/fit.1.png" width="192" height="120"/>'
 
         when: "we update the image"
         imageManager.store(imageFile)
@@ -109,5 +121,23 @@ class VersionedSpec extends IntegrationSpec {
         holder.version == 3
         originalReformatted.exists()
         !fitReformatted.exists()
+
+        when: "calling custom format tag"
+
+        String custom = tagLib.image(holder: holder, width: '100', height: 100, 'class':'test', {"empty"})
+        String fn = "DEFAULT-100x100_0x1.0p0_-0x1.0p0.3.png"
+        File customFile = new File("${localRoot}${fn}")
+        imageManager.filesManager.refresh()
+
+        then: "it exists"
+        custom == '<img src="/f/storage/vers/v/DEFAULT-100x100_0x1.0p0_-0x1.0p0.3.png" width="100" height="100" class="test"/>'
+        customFile.exists()
+        imageManager.filesManager.fileNames == [fn, originalReformatted.name]
+
+        when: "updating an object"
+        imageManager.reformat()
+
+        then: "custom file is deleted"
+        !customFile.exists()
     }
 }

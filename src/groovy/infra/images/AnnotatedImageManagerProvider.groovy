@@ -75,6 +75,7 @@ class AnnotatedImageManagerProvider {
             imageBundle = new ImageFormatsBundle(imageAnnotation.name(), formats, basesFormat)
         }
 
+        // TODO: add cache
         ImageManager getManager(def domain) {
             ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, imageFormatter)
             if (storeDomains) {

@@ -24,7 +24,6 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
 
     @Override
     void onStoreFile(ImageBox image, ImageFormat format) {
-
         FileDomain fileDomain = getFileDomain(formatsBundle.getFormatFilename(format))
 
         assert fileDomain
@@ -39,12 +38,13 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
 
     @Override
     void delete(ImageFormat format) {
-        getDomain(format)?.delete()
+        getDomain(format)?.delete(flush: true)
         imageDomainMap.remove(formatsBundle.getFormatFilename(format))
     }
 
     @Override
     void delete() {
+        filesManager.refresh()
         filesManager.fileNames.each {
             getImageDomain(getFileDomain(it))?.delete(flush: true)
             imageDomainMap.remove(it)

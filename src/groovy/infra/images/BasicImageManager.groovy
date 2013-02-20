@@ -27,6 +27,7 @@ class BasicImageManager implements ImageManager {
     private final ImageFormatter imageFormatter
     private ImageBox originalImage
     private List<Closure> onStoreFileCallbacks = []
+    private List<Closure> onBeforeDelete = []
 
     private static final Logger log = Logger.getLogger(BasicImageManager)
 
@@ -53,6 +54,9 @@ class BasicImageManager implements ImageManager {
 
     @Override
     ImageInfo getInfo(ImageFormat format) {
+        if (format instanceof CustomFormat) {
+            format.baseFormat = imageBundle.basesFormat
+        }
         new ImageInfo(format, getSize(format), getSrc(format))
     }
 
@@ -68,7 +72,9 @@ class BasicImageManager implements ImageManager {
 
     @Override
     Map<String, ImageSize> store(File image) {
-        if (isStored()) delete()
+        if (isStored()) {
+            delete()
+        }
         originalImage = new ImageBox(image)
         Map<String, ImageSize> fileSizes = [:]
 
@@ -101,6 +107,9 @@ class BasicImageManager implements ImageManager {
     @Override
     void reformat(ImageFormat format) {
         if (!isStored()) return;
+        if (format instanceof CustomFormat) {
+            format.baseFormat = imageBundle.basesFormat
+        }
         loadOriginal()
         if (originalImage.file?.exists()) {
             ImageBox box = imageFormatter.format(format, originalImage)
@@ -123,6 +132,7 @@ class BasicImageManager implements ImageManager {
     @Override
     void removeFormat(ImageFormat format) {
         if (!isStored()) return;
+        onBeforeDelete*.call(format)
         filesManager.delete(getFilename(format))
     }
 
@@ -171,6 +181,7 @@ class BasicImageManager implements ImageManager {
 
     @Override
     void delete() {
+        onBeforeDelete*.call()
         filesManager.delete()
     }
 
@@ -201,6 +212,11 @@ class BasicImageManager implements ImageManager {
     @Override
     void onStoreFile(Closure callback) {
         onStoreFileCallbacks.add(callback)
+    }
+
+    @Override
+    void onBeforeDelete(Closure callback) {
+        onBeforeDelete.add(callback)
     }
 
     protected ImageFormat getFormat(String formatName) {

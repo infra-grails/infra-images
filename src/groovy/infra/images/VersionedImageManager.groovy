@@ -45,6 +45,7 @@ class VersionedImageManager implements ImageManager {
         reformat()
     }
 
+    @Override
     void reformat() {
         manager.delete()
         incrementVersion()
