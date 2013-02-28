@@ -24,8 +24,6 @@ import org.springframework.stereotype.Component
 @Component
 @CompileStatic
 class AnnotatedImageManagerProvider {
-    private volatile Map<Class, Provider> providers = [:]
-
     @Autowired
     FileStorageService fileStorageService
     @Autowired
@@ -34,10 +32,7 @@ class AnnotatedImageManagerProvider {
     ImageDomainRepoProvider imageDomainRepoProvider
 
     Provider getProvider(Class aClass) {
-        if (!providers.containsKey(aClass)) {
-            providers.put(aClass, new Provider(aClass))
-        }
-        providers.get(aClass)
+        new Provider(aClass)
     }
 
     ImageManager getManager(def domain) {
@@ -45,7 +40,6 @@ class AnnotatedImageManagerProvider {
     }
 
     void clear() {
-        providers = [:]
     }
 
     private class Provider {

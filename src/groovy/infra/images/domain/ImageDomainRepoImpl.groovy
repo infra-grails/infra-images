@@ -12,8 +12,6 @@ import infra.images.util.ImageFormatsBundle
  * @since 2/18/13 7:19 PM
  */
 class ImageDomainRepoImpl implements ImageDomainRepo {
-    private final Map<String, ImageDomain> imageDomainMap = [:]
-
     private final DomainFilesManager filesManager
     private final ImageFormatsBundle formatsBundle
 
@@ -31,7 +29,6 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
         ImageDomain imageDomain = (ImageDomain)ImageDomain.findOrSaveByFile(fileDomain)
         imageDomain.forSize(image.size)
         imageDomain.save(failOnError: true)
-        imageDomainMap.put(formatsBundle.getFormatFilename(format), imageDomain)
 
         assert imageDomain.id
     }
@@ -39,7 +36,6 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
     @Override
     void delete(ImageFormat format) {
         getDomain(format)?.delete(flush: true)
-        imageDomainMap.remove(formatsBundle.getFormatFilename(format))
     }
 
     @Override
@@ -47,23 +43,14 @@ class ImageDomainRepoImpl implements ImageDomainRepo {
         filesManager.refresh()
         filesManager.fileNames.each {
             getImageDomain(getFileDomain(it))?.delete(flush: true)
-            imageDomainMap.remove(it)
         }
-        imageDomainMap.clear()
     }
 
     @Override
     ImageDomain getDomain(ImageFormat format) {
         String filename = formatsBundle.getFormatFilename(format)
-        if (!imageDomainMap.containsKey(filename)) {
-            FileDomain fileDomain = getFileDomain(filename)
-            if (fileDomain) {
-                imageDomainMap.put(filename, getImageDomain(fileDomain))
-            } else {
-                imageDomainMap.put filename, null
-            }
-        }
-        imageDomainMap.get(filename)
+        FileDomain fileDomain = getFileDomain(filename)
+        fileDomain ? getImageDomain(fileDomain) : null
     }
 
     private FileDomain getFileDomain(String filename) {
