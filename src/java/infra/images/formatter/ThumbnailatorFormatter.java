@@ -33,6 +33,7 @@ public class ThumbnailatorFormatter extends ImageFormatter {
         builder.size(w, h);
 
         File imageFile = File.createTempFile("thmbl", format.getFilename());
+        imageFile.deleteOnExit();
 
         if (!format.getCrop().isNoCrop()) {
             builder.crop(getPosition(format.getCrop())).toFile(imageFile);

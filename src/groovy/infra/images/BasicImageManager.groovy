@@ -82,6 +82,7 @@ class BasicImageManager implements ImageManager {
         for (ImageFormat format in imageBundle.formats.values()) {
             ImageBox box = imageFormatter.format(format, originalImage)
             fileSizes.put(storeFile(box, format), box.size)
+            box.file.delete()
         }
 
         fileSizes
@@ -93,9 +94,10 @@ class BasicImageManager implements ImageManager {
             return null
         }
         File imageFile = File.createTempFile("infra-image", "store")
-        imageFile.deleteOnExit()
         image.transferTo(imageFile)
-        store(imageFile)
+        Map<String, ImageSize> storeData = store(imageFile)
+        imageFile.delete()
+        storeData
     }
 
     @Override
@@ -114,6 +116,7 @@ class BasicImageManager implements ImageManager {
         if (originalImage.file?.exists()) {
             ImageBox box = imageFormatter.format(format, originalImage)
             storeFile(box, format)
+            box.file.delete()
         }
     }
 
@@ -170,6 +173,7 @@ class BasicImageManager implements ImageManager {
                 loadOriginal()
                 ImageBox box = imageFormatter.format(format, originalImage)
                 storeFile(box, format)
+                box.file.delete()
             }
         }
         filesManager.getUrl(getFilename(format))
