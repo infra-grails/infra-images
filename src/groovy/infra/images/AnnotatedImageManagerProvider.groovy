@@ -31,18 +31,20 @@ class AnnotatedImageManagerProvider {
     @Autowired
     ImageDomainRepoProvider imageDomainRepoProvider
 
+    WeakHashMap<Class,Provider> providerWeakHashMap = [:]
+
     Provider getProvider(Class aClass) {
-        new Provider(aClass)
+        providerWeakHashMap.get(aClass) ?: providerWeakHashMap.put(aClass, new Provider(aClass))
     }
 
     ImageManager getManager(def domain) {
-        getProvider(domain.class).getManager(domain)
+        getProvider(domain.class).getManager(domain, imageFormatter, imageDomainRepoProvider, fileStorageService)
     }
 
     void clear() {
     }
 
-    private class Provider {
+    static private class Provider {
         private final ImageFormatsBundle imageBundle
         private final Class domainClass
         private final FilesHolder filesHolder
@@ -70,8 +72,8 @@ class AnnotatedImageManagerProvider {
         }
 
         // TODO: add cache
-        ImageManager getManager(def domain) {
-            ImageManager m = new BasicImageManager(getFilesManager(domain), imageBundle, imageFormatter)
+        ImageManager getManager(def domain, ImageFormatter imageFormatter, ImageDomainRepoProvider imageDomainRepoProvider, FileStorageService fileStorageService) {
+            ImageManager m = new BasicImageManager(fileStorageService.getManager(domain, filesHolder as FilesHolder), imageBundle, imageFormatter)
             if (storeDomains) {
                 m = new DomainImageManager(m, imageDomainRepoProvider)
             }
@@ -79,10 +81,6 @@ class AnnotatedImageManagerProvider {
                 m = new VersionedImageManager(m, domain, versionProperty)
             }
             m
-        }
-
-        private FilesManager getFilesManager(def domain) {
-            fileStorageService.getManager(domain, filesHolder as FilesHolder)
         }
     }
 }
