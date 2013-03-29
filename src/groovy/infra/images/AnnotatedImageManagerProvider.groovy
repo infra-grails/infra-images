@@ -31,14 +31,25 @@ class AnnotatedImageManagerProvider {
     @Autowired
     ImageDomainRepoProvider imageDomainRepoProvider
 
-    WeakHashMap<Class,Provider> providerWeakHashMap = [:]
+    private volatile WeakHashMap<Class,Provider> providerWeakHashMap = [:]
 
     Provider getProvider(Class aClass) {
-        providerWeakHashMap.get(aClass) ?: providerWeakHashMap.put(aClass, new Provider(aClass))
+        Provider provider = providerWeakHashMap.get(aClass)
+        if(!provider) {
+            synchronized (this) {
+                provider = new Provider(aClass)
+                println "new provider"
+                providerWeakHashMap.put(aClass, provider)
+            }
+        }
+        provider
     }
 
     ImageManager getManager(def domain) {
-        getProvider(domain.class).getManager(domain, imageFormatter, imageDomainRepoProvider, fileStorageService)
+        assert domain.class
+        assert getProvider(domain.class)
+        getProvider(domain.class)
+                .getManager(domain, imageFormatter, imageDomainRepoProvider, fileStorageService)
     }
 
     void clear() {
