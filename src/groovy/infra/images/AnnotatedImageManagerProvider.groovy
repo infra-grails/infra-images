@@ -14,6 +14,7 @@ import infra.images.format.BasesFormat
 import infra.images.format.ImageFormat
 import infra.images.formatter.ImageFormatter
 import infra.images.util.ImageFormatsBundle
+import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -31,6 +32,8 @@ class AnnotatedImageManagerProvider {
     @Autowired
     ImageDomainRepoProvider imageDomainRepoProvider
 
+    static final private Logger log = Logger.getLogger(AnnotatedImageManagerProvider);
+
     private volatile WeakHashMap<Class,Provider> providerWeakHashMap = [:]
 
     Provider getProvider(Class aClass) {
@@ -38,7 +41,7 @@ class AnnotatedImageManagerProvider {
         if(!provider) {
             synchronized (this) {
                 provider = new Provider(aClass)
-                println "new provider"
+                log.info "New AnnotatedImageManagerProvider for ${aClass}"
                 providerWeakHashMap.put(aClass, provider)
             }
         }
@@ -60,8 +63,8 @@ class AnnotatedImageManagerProvider {
         private final Class domainClass
         private final FilesHolder filesHolder
 
-        private boolean storeDomains
-        private String versionProperty
+        private final boolean storeDomains
+        private final String versionProperty
 
         Provider(Class aClass) {
             domainClass = aClass
