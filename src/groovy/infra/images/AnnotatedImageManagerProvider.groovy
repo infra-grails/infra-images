@@ -3,7 +3,6 @@ package infra.images
 import groovy.transform.CompileStatic
 import infra.file.storage.FileStorageService
 import infra.file.storage.FilesHolder
-import infra.file.storage.FilesManager
 import infra.images.annotations.Format
 import infra.images.annotations.Image
 import infra.images.annotations.ImageHolder
@@ -34,7 +33,7 @@ class AnnotatedImageManagerProvider {
 
     static final private Logger log = Logger.getLogger(AnnotatedImageManagerProvider);
 
-    private volatile WeakHashMap<Class,Provider> providerWeakHashMap = [:]
+    private WeakHashMap<Class,Provider> providerWeakHashMap = [:]
 
     Provider getProvider(Class aClass) {
         Provider provider = providerWeakHashMap.get(aClass)
