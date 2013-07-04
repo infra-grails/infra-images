@@ -3,7 +3,7 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
-grails.project.repos.default = "quonb-snapshot"
+grails.project.repos.default = "quonb-release"
 
 //grails.plugin.location.'infra-file-storage' = "../infra-file-storage"
 
@@ -37,10 +37,10 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":infra-file-storage:0.2-SNAPSHOT"
+        compile ":infra-file-storage:0.2.0"
 
         build(":tomcat:$grailsVersion",
-                ":release:latest.release") {
+                ":release:2.2.1") {
             export = false
         }
         runtime(":hibernate:$grailsVersion") {
